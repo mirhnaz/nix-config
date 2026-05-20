@@ -124,12 +124,8 @@ notes below.
    home-manager switch --flake ~/dev/nix-config/.#mir@mir-m4pro-mbp
    ```
 
-3. **Set fish as the login shell** (fish is installed via Home Manager):
-
-   ```sh
-   sudo sh -c 'echo $HOME/.nix-profile/bin/fish >> /etc/shells'
-   chsh -s $HOME/.nix-profile/bin/fish
-   ```
+3. **Set fish as the login shell** — see
+   [Fish shell](#fish-shell) under Application configuration.
 
 4. **Ghostty** — the nixpkgs `ghostty` package is Linux-only, so the app itself
    is installed via Homebrew, while its configuration is managed declaratively by
@@ -218,6 +214,21 @@ sudo tailscale up -authkey tskey-auth-KEY   # Get the key from the Tailscale con
 
 The shell prompt uses [starship](https://starship.rs/), configured declaratively
 in `home-manager/common.nix` — no manual setup step is required.
+
+### Fish shell
+
+Fish is installed and configured for every host via `home-manager/common.nix`.
+To make it the **login shell**:
+
+- On **NixOS**, set it declaratively in the system config
+  (`users.users.<name>.shell = pkgs.fish`).
+- On **non-NixOS** systems (macOS, Pop!_OS), register and switch to the
+  Home-Manager-provided fish:
+
+  ```sh
+  sudo sh -c 'echo $HOME/.nix-profile/bin/fish >> /etc/shells'
+  chsh -s $HOME/.nix-profile/bin/fish
+  ```
 
 ### Doom Emacs
 
