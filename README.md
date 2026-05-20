@@ -51,7 +51,7 @@ tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='
 
 #macos specific functionality
 sudo sh -c 'echo $HOME/.nix-profile/bin/fish >> /etc/shells'
-sudo chsh -s $HOME/.nix-profile/bin/fish 
+chsh -s $HOME/.nix-profile/bin/fish 
 ```
 
 ## To update the system
