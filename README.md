@@ -24,7 +24,7 @@ Don't rename hardware config to specific machine as configuration.nix
 ```sh
 sudo ~/dev/nix-config/bin/rename-and-link.sh /etc/nixos/configuration.nix ~/dev/nix-config/nixos/hosts/pc/configuration-pc.nix
 sudo ~/dev/nix-config/bin/rename-and-link.sh /etc/nixos/hardware-configuration.nix ~/dev/nix-config/nixos/hosts/pc/hardware-configuration.nix
-sudo nixos-rebuild switch --flake /home/mir/nix-config/.#mir-nixos-pc
+sudo nixos-rebuild switch --flake $HOME/dev/nix-config/.#mir-nixos-pc
 ```
 
 ## Install Home manager as a standalone using flakes for nixos and non nixos systems
@@ -90,8 +90,8 @@ nh clean profile -a nixGL #nixGL is profile name and -a asks for confirmation
 
 ## Apply config via flakes in case *`nh`* helper is not installed
 ```nix
-sudo nixos-rebuild switch --flake /home/mir/nix-config/.#mir-nixos-thinkpad
-home-manager switch --flake /home/mir/nix-config/.#mir@mir-nixos-thinkpad
+sudo nixos-rebuild switch --flake $HOME/dev/nix-config/.#mir-nixos-thinkpad
+home-manager switch --flake $HOME/dev/nix-config/.#mir@mir-nixos-thinkpad
 ```
 
 ## Activating tailscale
@@ -102,7 +102,7 @@ home-manager switch --flake /home/mir/nix-config/.#mir@mir-nixos-thinkpad
 ## Nixos check build difference if *`nh`* helper is not installed
 Build the result before switching  
 ```sh 
-sudo nixos-rebuild build --flake /home/mir/nix-config/.#mir-nixos-thinkpad 
+sudo nixos-rebuild build --flake $HOME/dev/nix-config/.#mir-nixos-thinkpad 
 ``` 
 
 To compare current system with build result run  
