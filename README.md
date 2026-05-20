@@ -50,8 +50,8 @@ home-manager switch --flake ~/dev/nix-config/.#mir@mir-nixos-pc
 tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='24-hour format' --rainbow_prompt_separators=Vertical --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='One line' --prompt_spacing=Sparse --icons='Many icons' --transient=No
 
 #macos specific functionality
-sudo sh -c 'echo /Users/mir/.nix-profile/bin/fish >> /etc/shells'
-sudo chsh -s /Users/mir/.nix-profile/bin/fish 
+sudo sh -c 'echo $HOME/.nix-profile/bin/fish >> /etc/shells'
+sudo chsh -s $HOME/.nix-profile/bin/fish 
 ```
 
 ## To update the system
