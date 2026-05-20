@@ -91,7 +91,6 @@ config into the repo before the first switch.
 
 ```sh
 cd ~/dev/nix-config
-nix flake update
 
 # Initialize Home Manager; places a config at ~/.config/home-manager/home.nix
 nix run home-manager/master -- init --switch
