@@ -96,6 +96,23 @@
 
   programs.starship = {
     enable = true;
+    settings = {                                      
+      # Put user + host on the right side of the prompt.                                                    
+      right_format = "$username$hostname";            
+                                   
+      username = {                                    
+        show_always = true;                           
+        format = "[$user]($style)";                   
+        style_user = "yellow bold";                   
+        style_root = "red bold";
+      };     
+
+      hostname = {                                    
+        ssh_only = false;                             
+        format = "[@$hostname]($style) ";             
+        style = "green bold";                         
+      };                                              
+    };   
   };
 
   # # Configure direnv
