@@ -20,6 +20,7 @@ evaluated by Nix and activated on a host.
 - [Inspecting changes](#inspecting-changes)
 - [Services](#services)
 - [Application configuration](#application-configuration)
+- [License](#license)
 
 ## Overview
 
@@ -86,8 +87,8 @@ sudo nixos-rebuild switch --flake $HOME/dev/nix-config/.#mir-nixos-pc
 
 ## Home Manager (standalone)
 
-Used on every host (NixOS, macOS, Pop!_OS). Update inputs and link the generated
-config into the repo before the first switch.
+Used on every host (NixOS, macOS, Pop!_OS). Link the generated config into the
+repo before the first switch.
 
 ```sh
 cd ~/dev/nix-config
@@ -257,3 +258,7 @@ Link the Doom configuration into the repo:
 ~/dev/nix-config/bin/rename-and-link ~/.config/kitty/ ~/dev/nix-config/.config/kitty
 # The result will be in the current folder
 ```
+
+## License
+
+Released under the [MIT License](LICENSE) — free to use, copy, and adapt.
