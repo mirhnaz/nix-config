@@ -84,7 +84,21 @@
 
         "mir@mir-m4pro-mbp" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."aarch64-darwin"; # Home-manager requires 'pkgs' instance
-          extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
+          extraSpecialArgs = {
+            inherit inputs; # Pass flake inputs to our config
+            username = "mir";
+            homeDirectory = "/Users/mir";
+          };
+          modules = [ ./home-manager/hosts/home-mac.nix ];
+        };
+
+        "nazishhussainmir@K-H-2005735-M" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages."aarch64-darwin"; # Home-manager requires 'pkgs' instance
+          extraSpecialArgs = {
+            inherit inputs; # Pass flake inputs to our config
+            username = "nazishhussainmir";
+            homeDirectory = "/Users/nazishhussainmir";
+          };
           modules = [ ./home-manager/hosts/home-mac.nix ];
         };
 

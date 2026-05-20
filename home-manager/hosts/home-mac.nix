@@ -1,13 +1,13 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, username, homeDirectory, ... }:
 
 {
-  
+
   imports = [
-    ../common.nix    
+    ../common.nix
   ];
 
-  home.username = "mir";
-  home.homeDirectory = "/Users/mir";
+  home.username = username;
+  home.homeDirectory = homeDirectory;
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
