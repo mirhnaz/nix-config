@@ -53,6 +53,7 @@
     FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
     NIX_HOME = "$HOME/dev/nix-config";
     NIXPKGS_ALLOW_UNFREE = 1;
+    UV_SYSTEM_CERTS = 1;
 
     #macos specific env
     HOMEBREW_PREFIX = "/opt/homebrew";
