@@ -30,7 +30,7 @@
 
       # Theme — run `ghostty +list-themes` to browse built-ins.
       #theme = "Catppuccin Mocha";
-      theme = "Ayu Light";
+      theme = "Nvim Light";
 
       # macOS app icon — tweak without touching the .app bundle.
       # "custom" + macos-custom-icon uses our own .icns instead of a built-in.
