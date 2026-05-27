@@ -55,7 +55,7 @@
     NIXPKGS_ALLOW_UNFREE = 1;
     UV_SYSTEM_CERTS = 1;
     SSL_CERT_FILE = "$HOME/dev/CiscoSecureAccessRootCA.pem";
-    REQUESTS_CA_BUNDLE
+    REQUESTS_CA_BUNDLE = "$HOME/dev/CiscoSecureAccessRootCA.pem";
 
     #macos specific env
     HOMEBREW_PREFIX = "/opt/homebrew";
