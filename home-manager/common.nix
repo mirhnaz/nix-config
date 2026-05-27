@@ -54,6 +54,8 @@
     NIX_HOME = "$HOME/dev/nix-config";
     NIXPKGS_ALLOW_UNFREE = 1;
     UV_SYSTEM_CERTS = 1;
+    SSL_CERT_FILE = "$HOME/dev/CiscoSecureAccessRootCA.pem";
+    REQUESTS_CA_BUNDLE
 
     #macos specific env
     HOMEBREW_PREFIX = "/opt/homebrew";
