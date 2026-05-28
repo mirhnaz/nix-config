@@ -166,8 +166,8 @@
       gc = "git commit -m";
       gpull = "git pull origin main";
       gpush = "git push origin main";
-      nhos = "nh os switch --ask";
-      nhhome = "nh home switch --ask";
+      nhos = "nh os switch";
+      nhh = "nh home switch";
       c = "clear";
       ff = "fastfetch";
     };

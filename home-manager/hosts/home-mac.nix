@@ -30,7 +30,10 @@
 
       # Theme — run `ghostty +list-themes` to browse built-ins.
       #theme = "Catppuccin Mocha";
-      theme = "Monokai Pro Light Sun";
+      #theme = "Monokai Pro Light Sun";
+      theme = "Hacktober";
+
+      unfocused-split-opacity = 0.3;
 
       # macOS app icon — tweak without touching the .app bundle.
       # "custom" + macos-custom-icon uses our own .icns instead of a built-in.
