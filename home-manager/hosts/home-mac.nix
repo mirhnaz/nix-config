@@ -25,12 +25,12 @@
       # Fonts (the font files themselves come from the nerd-fonts.* packages
       # in common.nix / fontconfig).
       font-family = "MesloLGM Nerd Font";
-      font-size = 12;
+      font-size = 13;
       font-thicken = true;
 
       # Theme — run `ghostty +list-themes` to browse built-ins.
       #theme = "Catppuccin Mocha";
-      theme = "Nvim Light";
+      theme = "Breeze";
 
       # macOS app icon — tweak without touching the .app bundle.
       # "custom" + macos-custom-icon uses our own .icns instead of a built-in.
