@@ -57,6 +57,7 @@ in
     // lib.optionalAttrs (ghosttyTheme == "Hacktober") {
       selection-background = "#f5c355";
       selection-foreground = "#1a1a1a";
+      foreground = "#979797";
     };
   };
 }
