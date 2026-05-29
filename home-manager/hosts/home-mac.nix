@@ -1,5 +1,12 @@
 { config, pkgs, lib, username, homeDirectory, ... }:
 
+let
+  # The active Ghostty theme. Some settings below are theme-specific and only
+  # applied when this matches (see selection colors).
+  #ghosttyTheme = "Catppuccin Mocha";
+  #ghosttyTheme = "Monokai Pro Light Sun";
+  ghosttyTheme = "Hacktober";
+in
 {
 
   imports = [
@@ -29,11 +36,10 @@
       font-thicken = true;
 
       # Theme — run `ghostty +list-themes` to browse built-ins.
-      #theme = "Catppuccin Mocha";
-      #theme = "Monokai Pro Light Sun";
-      theme = "Hacktober";
+      theme = ghosttyTheme;
 
-      unfocused-split-opacity = 0.3;
+      unfocused-split-opacity = 0.6;
+      split-divider-color = "#216276";
 
       # macOS app icon — tweak without touching the .app bundle.
       # "custom" + macos-custom-icon uses our own .icns instead of a built-in.
@@ -43,6 +49,14 @@
       # macos-icon-frame = "aluminum";
       # macos-icon-ghost-color = "#ff5500";
       # macos-icon-screen-color = "#1a1a2e";
+    }
+    # The Hacktober theme's selection background is ~the same as the window
+    # background, making selected text invisible. Override with a visible
+    # highlight, but only when that theme is active. (Alternatively:
+    # selection-invert-fg-bg = true to just swap fg/bg regardless of theme.)
+    // lib.optionalAttrs (ghosttyTheme == "Hacktober") {
+      selection-background = "#f5c355";
+      selection-foreground = "#1a1a1a";
     };
   };
 }

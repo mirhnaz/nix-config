@@ -35,7 +35,6 @@
     nixpkgs-fmt
 
     #sytem utils
-    btop
     tldr
     nmap
 
@@ -97,6 +96,13 @@
   programs.nh = {
     enable = true;
     flake = "$HOME/dev/nix-config";
+  };
+
+  programs.btop = {
+    enable = true;
+    settings = {
+      shown_boxes = "cpu gpu0 proc";
+    };
   };
 
   programs.starship = {
