@@ -1,0 +1,15 @@
+# Global uv tools (installed via `uv tool install <name>`).
+#
+# These are machine-wide CLIs, NOT per-project dependencies. Per-project Python
+# deps live in each project's own pyproject.toml + uv.lock and are reproduced by
+# `uv sync` there — they do NOT belong in this file.
+#
+# NOTE: `brew bundle dump` also captures these as `uv "..."` lines in ./Brewfile,
+# so `brew bundle install` will install them for you. This file is the
+# brew-independent fallback — use it if you install uv tools without Homebrew.
+#
+# Regenerate:  uv tool list | awk '/^[^ -]/ {print $1}' > macos/uv-tools.txt
+# Restore:     while read -r t; do [ -n "$t" ] && [ "${t#\#}" = "$t" ] && uv tool install "$t"; done < macos/uv-tools.txt
+
+huggingface-hub[cli]
+mlx-whisper

@@ -129,12 +129,30 @@ notes below.
    [Fish shell](#fish-shell) under Application configuration.
 
 4. **Ghostty** — the nixpkgs `ghostty` package is Linux-only, so the app itself
-   is installed via Homebrew, while its configuration is managed declaratively by
-   Home Manager in `home-manager/hosts/home-mac.nix`:
+   is installed via Homebrew (declared in `macos/Brewfile`, see below), while its
+   configuration is managed declaratively by Home Manager in
+   `home-manager/hosts/home-mac.nix`.
+
+5. **Non-Nix channels** — on macOS this repo runs *standalone* Home Manager (no
+   nix-darwin), so the flake only manages Nix packages. Homebrew, global `uv`
+   tools, and hand-downloaded apps are tracked separately under `macos/`. After
+   the Home Manager switch, run:
 
    ```sh
-   brew install --cask ghostty
+   # Homebrew formulae + casks (and uv tools) — adopts already-installed apps
+   brew bundle install --file=~/dev/nix-config/macos/Brewfile
+
+   # Global uv tools, if you skipped brew or want them brew-independent
+   while read -r t; do [ -n "$t" ] && [ "${t#\#}" = "$t" ] && uv tool install "$t"; done \
+     < ~/dev/nix-config/macos/uv-tools.txt
+
+   # Hand-downloaded / App Store apps — open the checklist and reinstall each
+   open ~/dev/nix-config/macos/apps.md
    ```
+
+   See [`macos/README.md`](macos/README.md) for the full bootstrap order, how to
+   re-snapshot state after installing new things, and when adopting nix-darwin
+   becomes worthwhile.
 
 ## Everyday commands
 

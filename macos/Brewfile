@@ -1,0 +1,12 @@
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
+# OCR (Optical Character Recognition) engine
+brew "tesseract"
+# Adds an OCR text layer to scanned PDF files
+brew "ocrmypdf"
+# Enables extra languages support for Tesseract
+brew "tesseract-lang"
+# Terminal emulator — config is managed in Nix (home-mac.nix), app via brew
+cask "ghostty"
+uv "huggingface-hub[cli]"
+uv "mlx-whisper"
