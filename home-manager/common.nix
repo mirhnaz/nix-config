@@ -2,6 +2,10 @@
 
 {
 
+  imports = [
+    ./ghostty.nix
+  ];
+
   home.packages = with pkgs; [
     
     #basics

@@ -10,7 +10,6 @@
   #   ../services.nix — dconf/GNOME + virt-manager settings; Omarchy is Hyprland.
   imports = [
     ../common.nix
-    ../ghostty.nix
   ];
 
   home.username = "mir";
