@@ -10,6 +10,7 @@
   #   ../services.nix — dconf/GNOME + virt-manager settings; Omarchy is Hyprland.
   imports = [
     ../common.nix
+    ../ghostty.nix
   ];
 
   home.username = "mir";
@@ -27,6 +28,12 @@
   # and picks up Omarchy's config). Drop this override + move the file
   # aside if you'd rather use the HM starship settings from common.nix.
   programs.starship.settings = lib.mkForce { };
+
+  # Ghostty config comes from ../ghostty.nix, but as with alacritty the
+  # nix-built GUI app would need nixGL here — `sudo pacman -S ghostty`
+  # instead; HM only writes ~/.config/ghostty/config.
+  programs.ghostty.package = null;
+  programs.ghostty.systemd.enable = false;
 
   home.packages = with pkgs; [
     # CLI-only tools are safe on a foreign distro

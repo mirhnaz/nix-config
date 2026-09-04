@@ -5,6 +5,7 @@
       ../common.nix
       ../common-linux.nix
       ../services.nix
+      ../ghostty.nix
   ];
 
   home.packages = with pkgs; [

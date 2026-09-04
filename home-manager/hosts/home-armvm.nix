@@ -4,6 +4,7 @@
   imports = [
       ../common.nix
       ../common-linux.nix
+      ../ghostty.nix
   ];
   
   home.packages = with pkgs; [
