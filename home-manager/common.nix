@@ -114,17 +114,17 @@
     enable = true;
     settings = {                                      
       # Put user + host on the right side of the prompt.                                                    
-      right_format = "$username$hostname";            
+      # right_format = "$username$hostname";            
                                    
       username = {                                    
-        show_always = true;                           
+        show_always = false;                           
         format = "[$user]($style)";                   
         style_user = "yellow bold";                   
         style_root = "red bold";
       };     
 
       hostname = {                                    
-        ssh_only = false;                             
+        ssh_only = true;                             
         format = "[@$hostname]($style) ";             
         style = "green bold";                         
       };                                              
@@ -149,10 +149,6 @@
       { name = "colored-man-pages"; src = pkgs.fishPlugins.colored-man-pages.src; }
       { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
     ];
-  
-    interactiveShellInit = ''
-      starship init fish | source
-    '';
   
     shellInitLast = ''
       if test "$TERM" = "dumb"
