@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository purpose
 
-A personal Nix flake managing system (NixOS) and user (Home Manager) configuration across several hosts and platforms — NixOS x86_64 desktops/laptops, an aarch64 NixOS VM, macOS (aarch64-darwin), and Pop!_OS as a Home-Manager-only target. There is no application code here; every change is configuration that gets evaluated by Nix and activated on a host.
+A personal Nix flake managing system (NixOS) and user (Home Manager) configuration across several hosts and platforms — NixOS x86_64 desktops/laptops, an aarch64 NixOS VM, macOS (aarch64-darwin), and Pop!_OS and Omarchy (Arch + Hyprland) as Home-Manager-only targets. There is no application code here; every change is configuration that gets evaluated by Nix and activated on a host.
 
 ## Apply / rebuild commands
 
@@ -69,21 +69,40 @@ When adding a new host, both an entry in `flake.nix` *and* the corresponding hos
 
 Layered imports — each host file picks its layers:
 
-- `common.nix` — packages, shell (zsh), git, starship, direnv, fonts. Shared by *every* home config.
-- `common-linux.nix` — Linux-only additions (nvd, nixd, alacritty, vscode). Imported by Linux home files only.
+- `common.nix` — the **universal super-import**, shared by *every* home config (macOS and Linux): packages, shell (fish; the zsh block is commented out, kept as an off switch), git, starship, nh, fonts. Anything meant for all machines lives here or is imported from here (e.g. `ghostty.nix`).
+- `common-linux.nix` — the **Linux super-import** (nvd, nixd, alacritty, vscode; also sets `home.username`/`homeDirectory`/`stateVersion` for its importers). Imported by NixOS Linux hosts and Pop!_OS — but *not* by `home-omarchy.nix`, deliberately (see the foreign-distro section).
 - `services.nix` — dconf / user services. Linux-only.
-- `hosts/home-<host>.nix` — sets `home.username`, `home.homeDirectory`, `home.stateVersion`, picks which layers to import, adds host-specific packages and program configs (e.g. `home-nixos.nix` configures kitty; `home-mac.nix` only imports `common.nix`).
+- `hosts/home-<host>.nix` — sets `home.username`, `home.homeDirectory`, `home.stateVersion`, picks which layers to import, adds host-specific packages and program configs (e.g. `home-nixos.nix` configures kitty; `home-mac.nix` imports only `common.nix` and adds macOS Ghostty bits; `home-omarchy.nix` imports only `common.nix` and disables what Omarchy owns).
 
 When adding a new program: prefer `home-manager/common.nix` if it should run everywhere, `common-linux.nix` if it's Linux-specific, or the host file if it's truly per-machine. macOS-specific bits go in `home-manager/hosts/home-mac.nix`.
+
+### Ghostty (`home-manager/ghostty.nix`)
+
+Shared Ghostty config, imported by every host via `common.nix`: theme (a `ghosttyTheme` let-binding at the top, with theme-conditional selection-color fixes), MesloLGM Nerd Font, split settings. Changing `ghosttyTheme` re-themes every machine. Per-host differences stay in host files:
+
+- **macOS**: the app comes from Homebrew (the nix ghostty package is Linux-only) → `package = null`; `macos-icon` settings live in `home-mac.nix`.
+- **NixOS hosts**: the module's default `pkgs.ghostty` gets installed.
+- **Omarchy / Pop!_OS**: `package = null` **and** `systemd.enable = false` (the HM module's systemd unit requires a package); install the app from the distro (`sudo pacman -S ghostty` on Omarchy).
 
 ### Helper scripts (`bin/`)
 
 - `rename-and-link.sh <source> <target>` — backs up `source` to `source.orig` and replaces it with a symlink pointing at `target`. Used to bring system-generated files (e.g. `/etc/nixos/hardware-configuration.nix`, `~/.config/home-manager/home.nix`) under repo control. See README for the exact incantations used during initial setup.
 - `nvidia-offload`, `sway-launcher-desktop` — referenced from NixOS configs.
 
+## Foreign-distro hosts (Omarchy, Pop!_OS)
+
+Home Manager runs standalone on top of a non-NixOS distro on these hosts. Rules that keep them conflict-free:
+
+- **Omarchy is Arch + Hyprland and heavily bash-based.** Its theme/update system owns and rewrites its dotfiles: `~/.bashrc`, `~/.config/hypr/`, waybar, **alacritty** (Omarchy's default terminal), `~/.config/btop/`, `~/.config/starship.toml`. Home Manager must **never** manage those files — HM's read-only store symlinks would break Omarchy's theme switching, and HM activation refuses to clobber them anyway. Hence in `home-omarchy.nix`: `programs.btop.enable = lib.mkForce false` and `programs.starship.settings = lib.mkForce { }` (starship itself stays enabled; with empty settings HM writes no `starship.toml`, and fish picks up Omarchy's). Fish is safe to manage (Omarchy doesn't touch `~/.config/fish`); git config is HM-owned (Omarchy's original was moved to `~/.config/git/config.backup` by the first `-b backup` switch).
+- **Don't switch Omarchy's login shell to fish** — Omarchy relies on bash. Fish is used as a working shell launched from bash instead.
+- **GUI apps come from the distro, not nix.** Nix-built GUI apps on a foreign distro hit OpenGL/driver issues (they'd need nixGL). Pattern for HM modules that ship an app: `package = null` (+ `systemd.enable = false` if the module has a unit) so HM only writes config. Same reason `home-omarchy.nix` skips `common-linux.nix` (it pulls alacritty/vscode/windsurf as nix packages).
+- **Shell bootstrap on Omarchy:** HM session vars (`NH_FLAKE`, `NIX_HOME`, PATH additions) reach bash via one line appended at the *bottom* of `~/.bashrc`: `. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"`. Caveat: the Arch/Omarchy `.bashrc` returns early for non-interactive shells, so `ssh host 'cmd'` won't see these vars — interactive terminals do, which is where `nh` runs.
+- **First activation on a fresh foreign-distro machine:** install Nix (Determinate installer), clone this repo to `~/dev/nix-config`, then `nix run home-manager/master -- switch -b backup --flake ~/dev/nix-config/.#mir@<host>`. From then on plain `nh home switch --ask` works.
+- The Omarchy PC (`mir@mir-omarchy-pc`) accepts key-based SSH from the macOS machine for remote edits when asked.
+
 ## Conventions worth knowing
 
 - Hostnames in `flake.nix` (e.g. `mir-nixos-pc`, `mir-m4pro-mbp`) must match the machine's `networking.hostName` (NixOS) or be passed explicitly to `nh`/`home-manager`.
 - `home.stateVersion` and `system.stateVersion` are pinned to `"23.05"` — do not bump them casually; they encode migration state, not "current version."
 - `nixpkgs.config.allowUnfree` is set both system-wide (NixOS `default.nix`) and per-user (`home-manager/common.nix`) — unfree packages work in either context.
-- Commented-out blocks are common throughout (alternative DEs, disabled services, fish config preserved alongside zsh). Treat them as the user's "off switches" — don't delete them when making unrelated edits.
+- Commented-out blocks are common throughout (alternative DEs, disabled services, zsh config preserved alongside the active fish config). Treat them as the user's "off switches" — don't delete them when making unrelated edits.
