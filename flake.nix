@@ -81,6 +81,14 @@
           ];
         };
 
+        "mir@mir-omarchy-pc" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages."x86_64-linux"; # Home-manager requires 'pkgs' instance
+          extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
+          modules = [
+            ./home-manager/hosts/home-omarchy.nix
+          ];
+        };
+
 
         "mir@mir-m4pro-mbp" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."aarch64-darwin"; # Home-manager requires 'pkgs' instance
