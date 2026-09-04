@@ -21,6 +21,13 @@
   # switching would break against a store symlink. Let Omarchy keep it.
   programs.btop.enable = lib.mkForce false;
 
+  # Same story for ~/.config/starship.toml — Omarchy ships and themes it.
+  # Empty settings means HM generates no starship.toml, so Omarchy's file
+  # stays in place; starship itself remains enabled (fish integration works
+  # and picks up Omarchy's config). Drop this override + move the file
+  # aside if you'd rather use the HM starship settings from common.nix.
+  programs.starship.settings = lib.mkForce { };
+
   home.packages = with pkgs; [
     # CLI-only tools are safe on a foreign distro
     nvd
