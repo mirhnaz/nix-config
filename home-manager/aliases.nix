@@ -24,7 +24,7 @@ let
   # also emitted as ordinary aliases for bash — same effect, no expansion.
   #
   # Command-scoped abbreviations (attrset form) expand a token only when it is
-  # an argument to `command`: typing `git add` + space gives `git add .`.
+  # an argument to `command`: typing `nh home switch` + space adds `--ask`.
   # Abbreviation names cannot contain spaces (fish rejects them, and bash
   # would parse `alias git add=…` as two words), so this is the way to make a
   # sub-command expand. Fish only — bash has no equivalent, so these are
