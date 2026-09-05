@@ -1,10 +1,15 @@
 { config, lib, pkgs, ... }:
 
-# Shared Ghostty configuration for every host. The app itself differs per
-# platform: NixOS hosts get pkgs.ghostty installed via this module's default
-# package; macOS (Homebrew install) and foreign-distro Linux (pacman/apt
-# install) set `programs.ghostty.package = null` in their host file so HM
-# only writes ~/.config/ghostty/config.
+# Shared Ghostty configuration for every host — settings AND keybinds live
+# here so the terminal behaves identically everywhere. Host files only decide
+# where the app comes from: NixOS hosts get pkgs.ghostty installed via this
+# module's default package; macOS (Homebrew install) and foreign-distro Linux
+# (pacman/apt install) set `programs.ghostty.package = null` so HM only
+# writes ~/.config/ghostty/config.
+#
+# macos-* keys are accepted on every platform and ignored off macOS, and the
+# `cmd` key modifier is an alias for `super` on Linux, so nothing here needs
+# to be platform-guarded.
 
 let
   # The active Ghostty theme. Some settings below are theme-specific and only
@@ -35,6 +40,24 @@ in
       # Focus the split under the mouse pointer instead of needing
       # cmd+alt+arrow to move between splits.
       focus-follows-mouse = true;
+
+      # macOS app icon (no-op elsewhere) — tweak without touching the .app
+      # bundle. "custom" + macos-custom-icon (absolute path to an .icns) uses
+      # a custom icon instead of a built-in one.
+      macos-icon = "chalkboard";
+      # macos-icon-frame = "aluminum";
+      # macos-icon-ghost-color = "#ff5500";
+      # macos-icon-screen-color = "#1a1a2e";
+
+      # Keybinds (one string per binding).
+      keybind = [
+        # Cmd/Super+Enter: on macOS Ghostty's default is toggle_fullscreen, so
+        # the key never reaches the shell. Send ESC CR instead (the same bytes
+        # as Alt+Enter) so TUI apps like Claude Code can bind it (see
+        # ~/.claude/keybindings.json, where Enter = newline and alt+enter =
+        # submit).
+        "cmd+enter=text:\\x1b\\r"
+      ];
     }
     # The Hacktober theme's selection background is ~the same as the window
     # background, making selected text invisible. Override with a visible

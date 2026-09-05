@@ -86,9 +86,9 @@ When adding a new program: prefer `home-manager/common.nix` if it should run eve
 
 ### Ghostty (`home-manager/ghostty.nix`)
 
-Shared Ghostty config, imported by every host via `common.nix`: theme (a `ghosttyTheme` let-binding at the top, with theme-conditional selection-color fixes), MesloLGM Nerd Font, split settings. Changing `ghosttyTheme` re-themes every machine. Per-host differences stay in host files:
+Shared Ghostty config, imported by every host via `common.nix`: theme (a `ghosttyTheme` let-binding at the top, with theme-conditional selection-color fixes), MesloLGM Nerd Font, split settings, macOS icon, and all keybinds. **Every** Ghostty setting belongs here so hosts stay identical. Changing `ghosttyTheme` re-themes every machine. Per-host differences stay in host files:
 
-- **macOS**: the app comes from Homebrew (the nix ghostty package is Linux-only) → `package = null`; `macos-icon` settings live in `home-mac.nix`.
+- **macOS**: the app comes from Homebrew (the nix ghostty package is Linux-only) → `package = null`. `macos-*` settings and keybinds also live in `ghostty.nix` (accepted everywhere, no-ops off macOS) — don't add Ghostty settings to host files.
 - **NixOS hosts**: the module's default `pkgs.ghostty` gets installed.
 - **Omarchy / Pop!_OS**: `package = null` **and** `systemd.enable = false` (the HM module's systemd unit requires a package); install the app from the distro (`sudo pacman -S ghostty` on Omarchy).
 
