@@ -20,20 +20,30 @@ let
     "..." = "cd ../..";
   };
 
-  # Fish abbreviations (expand inline before running). In bash/zsh these are
-  # ordinary aliases — same effect, no inline expansion.
+  # Fish abbreviations (expand inline before running). String-valued ones are
+  # also emitted as ordinary aliases for bash — same effect, no expansion.
+  #
+  # Command-scoped abbreviations (attrset form) expand a token only when it is
+  # an argument to `command`: typing `git add` + space gives `git add .`.
+  # Abbreviation names cannot contain spaces (fish rejects them, and bash
+  # would parse `alias git add=…` as two words), so this is the way to make a
+  # sub-command expand. Fish only — bash has no equivalent, so these are
+  # skipped in aliases.sh.
   abbrs = {
-    "git add" = "git add .";
-    "git commit" = "git commit -m";
-    "nh os switch" = "nh os switch --ask";
-    "nh home switch" = "nh home switch --ask";
     c = "clear";
     ff = "fastfetch";
+
+    # covers both `nh os switch` and `nh home switch`
+    switch = {
+      command = "nh";
+      expansion = "switch --ask";
+    };
   };
 
-  all = aliases // abbrs;
-  posixAliases = lib.concatMapStringsSep "\n" (n: "alias ${n}=${lib.escapeShellArg all.${n}}") (
-    lib.attrNames all
+  # Only plain-string entries can become POSIX aliases.
+  posix = aliases // lib.filterAttrs (_: v: builtins.isString v) abbrs;
+  posixAliases = lib.concatMapStringsSep "\n" (n: "alias ${n}=${lib.escapeShellArg posix.${n}}") (
+    lib.attrNames posix
   );
 in
 {
