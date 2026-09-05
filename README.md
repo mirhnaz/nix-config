@@ -221,6 +221,10 @@ committing (also after regenerating a `hardware-configuration.nix`).
 
 ### Garbage collection
 
+`nh clean user --keep 5 --keep-since 14d` runs weekly on every host
+(`programs.nh.clean` in `home-manager/common.nix`: a systemd user timer on
+Linux, a launchd agent on macOS). Manually:
+
 ```sh
 nh clean all     # Clean OS and Home profiles
 nh clean user    # Clean user profiles
@@ -272,12 +276,23 @@ sudo tailscale up -authkey tskey-auth-KEY   # Get the key from the Tailscale con
 
 ## Application configuration
 
-The shell prompt uses [starship](https://starship.rs/), configured declaratively
-in `home-manager/common.nix` — no manual setup step is required. Over SSH the
-prompt shows `user@host` on the right so a remote shell is obvious; on Omarchy
-(whose own `starship.toml` is left untouched) the same marker comes from
-`home-manager/hosts/home-omarchy.nix` instead — a fish right prompt, and for
-bash a right-aligned line above the prompt.
+The shell prompt uses [starship](https://starship.rs/), configured once for
+every host in `home-manager/common.nix` — no manual setup step is required.
+The layout mirrors Omarchy's shipped `starship.toml` and uses named colours, so
+Omarchy's themes still restyle it. On a fresh Omarchy install move Omarchy's
+copy aside before the first switch:
+
+```sh
+mv ~/.config/starship.toml ~/.config/starship.toml.omarchy
+```
+
+Over SSH the prompt shows `user@host` on the right so a remote shell is
+obvious. Bash has no right prompt, so on Omarchy's bash the same marker is a
+right-aligned line above the prompt (`home-manager/hosts/home-omarchy.nix`).
+
+On macOS, a new fish shell warns when the Mac has drifted from
+`macos/Brewfile` (checked at most once a day); fix it with
+`brew bundle install --file=macos/Brewfile`.
 
 ### Shell shortcuts (fish + bash)
 

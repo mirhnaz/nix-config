@@ -24,7 +24,7 @@
     nil
     vscode
     emacs-all-the-icons-fonts
-    windsurf
+    devin-desktop # was `windsurf`; nixpkgs renamed the package after the rebrand
 
     #system utils
     alacritty

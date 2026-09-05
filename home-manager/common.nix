@@ -120,6 +120,13 @@
   programs.nh = {
     enable = true;
     flake = "$HOME/dev/nix-config";
+    # Weekly `nh clean user`: systemd user timer on Linux, launchd agent on
+    # macOS. Keeps the last 5 generations and anything newer than 14 days.
+    clean = {
+      enable = true;
+      dates = "weekly";
+      extraArgs = "--keep 5 --keep-since 14d";
+    };
   };
 
   programs.btop = {
@@ -129,15 +136,59 @@
     };
   };
 
+  # Prompt: one starship config for every host. The layout mirrors Omarchy's
+  # shipped /usr/share/omarchy/config/starship.toml (Omarchy 4.0) so the prompt
+  # looks the same on macOS, Pop!_OS and Omarchy. Colours are *named* ANSI
+  # colours ("cyan"), never hex: that is how Omarchy's themes reach the prompt
+  # (they repaint the terminal palette; starship.toml itself is never touched
+  # by a theme), so theming keeps working with HM owning the file. If Omarchy
+  # changes its shipped file, home-omarchy.nix's fish greeting says so —
+  # re-sync the values here.
   programs.starship = {
     enable = true;
     settings = {
+      add_newline = true;
+      command_timeout = 200;
+      format = "[$directory$git_branch$git_status]($style)$character";
+
       # user@host on the right side of the prompt — only over SSH (hostname
       # is ssh_only, username hides for the local user), so a remote shell is
       # obvious. Fish/zsh only: bash has no right prompt (starship needs
-      # ble.sh there). Omarchy forces settings empty and uses its own
-      # starship.toml — see hosts/home-omarchy.nix for its SSH marker.
+      # ble.sh there) — see hosts/home-omarchy.nix for the bash fallback.
       right_format = "$username$hostname";
+
+      character = {
+        success_symbol = "[❯](bold cyan)";
+        error_symbol = "[✗](bold cyan)";
+      };
+
+      directory = {
+        truncation_length = 2;
+        truncation_symbol = "…/";
+        repo_root_style = "bold cyan";
+        repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) ";
+      };
+
+      git_branch = {
+        format = "[$branch]($style) ";
+        style = "italic cyan";
+      };
+
+      git_status = {
+        format = "[$all_status]($style)";
+        style = "cyan";
+        ahead = "⇡\${count} ";
+        diverged = "⇕⇡\${ahead_count}⇣\${behind_count} ";
+        behind = "⇣\${count} ";
+        conflicted = " "; # nerd-font glyphs, as in Omarchy's file
+        up_to_date = " ";
+        untracked = "? ";
+        modified = " ";
+        stashed = "";
+        staged = "";
+        renamed = "";
+        deleted = "";
+      };
 
       username = {
         show_always = false;
@@ -181,6 +232,30 @@
         src = pkgs.fishPlugins.sponge.src;
       }
     ];
+
+    # macOS: warn at shell start when the Mac has drifted from macos/Brewfile
+    # (a missing brew formula silently breaks things like the `ff` abbr, since
+    # fastfetch comes from Homebrew there). `brew bundle check` costs ~0.3s, so
+    # it runs at most once a day — or every shell while drift is known, so the
+    # notice keeps showing until it is fixed.
+    functions.fish_greeting = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin ''
+      command -q brew; or return
+      set -l brewfile $NIX_HOME/macos/Brewfile
+      set -l stamp $HOME/.cache/hm/brewfile-check
+      if not test -f $stamp; or test "$(cat $stamp)" = drift; or test -z "$(find $stamp -mmin -1440)"
+        mkdir -p (dirname $stamp)
+        if HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ENV_HINTS=1 brew bundle check --file=$brewfile >/dev/null 2>&1
+          echo ok > $stamp
+        else
+          echo drift > $stamp
+        end
+      end
+      if test "$(cat $stamp)" = drift
+        set_color yellow
+        echo "Homebrew drift — run: brew bundle install --file=$brewfile"
+        set_color normal
+      end
+    '';
 
     shellInitLast = ''
       if test "$TERM" = "dumb"
