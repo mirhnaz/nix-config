@@ -271,6 +271,19 @@ sudo tailscale up -authkey tskey-auth-KEY   # Get the key from the Tailscale con
 The shell prompt uses [starship](https://starship.rs/), configured declaratively
 in `home-manager/common.nix` — no manual setup step is required.
 
+### Shell shortcuts (fish + bash)
+
+Aliases and abbreviations are defined once in `home-manager/aliases.nix` and
+reach fish on every host automatically. For a bash that Home Manager does not
+manage (Omarchy), add this single line at the bottom of `~/.bashrc`:
+
+```sh
+. "$HOME/.config/hm/bashrc.sh"
+```
+
+It loads the Home Manager session variables and the generated
+`~/.config/hm/aliases.sh`, so the same shortcuts work in bash.
+
 ### Fish shell
 
 Fish is installed and configured for every host via `home-manager/common.nix`.

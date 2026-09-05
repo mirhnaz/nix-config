@@ -4,6 +4,7 @@
 
   imports = [
     ./ghostty.nix
+    ./aliases.nix # shared shell shortcuts (fish + Omarchy bash)
   ];
 
   home.packages = with pkgs; [
@@ -169,24 +170,8 @@
         function fish_title; end
       end
     '';
-  
-    shellAliases = {
-      ll = "ls -al";
-      rm = "safe-rm";
-      "..." = "cd ../..";
-    };
-  
-    shellAbbrs = {
-      gs = "git status";
-      ga = "git add .";
-      gc = "git commit -m";
-      gpull = "git pull origin main";
-      gpush = "git push origin main";
-      nhos = "nh os switch";
-      nhh = "nh home switch";
-      c = "clear";
-      ff = "fastfetch";
-    };
+
+    # Aliases/abbreviations live in ./aliases.nix (shared with bash on Omarchy).
   };
 
   # programs.zsh = {
