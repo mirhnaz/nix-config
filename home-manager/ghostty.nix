@@ -11,7 +11,10 @@ let
   # applied when this matches (see selection colors).
   #ghosttyTheme = "Catppuccin Mocha";
   #ghosttyTheme = "Monokai Pro Light Sun";
-  ghosttyTheme = "Hacktober";
+  #ghosttyTheme = "Hacktober";
+  # Other variants: "TokyoNight Storm", "TokyoNight Moon", "TokyoNight Night",
+  # "TokyoNight Day" (light).
+  ghosttyTheme = "TokyoNight";
 in
 {
   programs.ghostty = {
