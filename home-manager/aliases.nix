@@ -23,13 +23,10 @@ let
   # Fish abbreviations (expand inline before running). In bash/zsh these are
   # ordinary aliases — same effect, no inline expansion.
   abbrs = {
-    gs = "git status";
-    ga = "git add .";
-    gc = "git commit -m";
-    gpull = "git pull origin main";
-    gpush = "git push origin main";
-    nhos = "nh os switch";
-    nhh = "nh home switch";
+    "git add" = "git add .";
+    "git commit" = "git commit -m";
+    "nh os switch" = "nh os switch --ask";
+    "nh home switch" = "nh home switch --ask";
     c = "clear";
     ff = "fastfetch";
   };
