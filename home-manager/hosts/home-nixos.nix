@@ -1,10 +1,10 @@
-{config, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
-      ../common.nix
-      ../common-linux.nix
-      ../services.nix
+    ../common.nix
+    ../common-linux.nix
+    ../services.nix
   ];
 
   home.username = "mir";

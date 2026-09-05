@@ -25,10 +25,15 @@
 
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs:
+  outputs =
+    { nixpkgs, home-manager, ... }@inputs:
 
     {
-
+      # `nix fmt` formats the whole tree (nixfmt via treefmt); CI runs
+      # `nix fmt -- --ci`, which fails on any drift.
+      formatter = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (
+        system: nixpkgs.legacyPackages.${system}.nixfmt-tree
+      );
 
       nixosConfigurations = {
 
@@ -43,15 +48,15 @@
           system = "x86_64-linux";
           specialArgs = { inherit inputs; }; # Pass flake inputs to our config
           # > Our main nixos configuration file <
-          modules = [  
-            ./nixos/hosts/pc/configuration-pc.nix 
+          modules = [
+            ./nixos/hosts/pc/configuration-pc.nix
           ];
         };
 
       };
 
       homeConfigurations = {
-        "mir@mir-nixos-thinkpad"  = home-manager.lib.homeManagerConfiguration {
+        "mir@mir-nixos-thinkpad" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."x86_64-linux"; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
           modules = [
@@ -59,7 +64,7 @@
           ];
         };
 
-        "mir@mir-nixos-pc"  = home-manager.lib.homeManagerConfiguration {
+        "mir@mir-nixos-pc" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."x86_64-linux"; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
           modules = [
@@ -82,7 +87,6 @@
             ./home-manager/hosts/home-omarchy.nix
           ];
         };
-
 
         "mir@mir-m4pro-mbp" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."aarch64-darwin"; # Home-manager requires 'pkgs' instance

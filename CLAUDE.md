@@ -45,13 +45,13 @@ nvd diff /run/current-system/ ./result/
 
 ## CI
 
-`.github/workflows/check.yml` runs on push to `main` and on PRs. It does `nix flake show` plus a pure `nix eval` of every output's derivation path (`config.system.build.toplevel.drvPath` for NixOS hosts, `activationPackage.drvPath` for home configs) — nothing is built. `nix flake check` is *not* used: it ignores `homeConfigurations` and fails on placeholder hardware configs. When adding a host, add it to the matrix. `mir-nixos-thinkpad` is commented out of the matrix until its real `hardware-configuration.nix` is committed.
+`.github/workflows/check.yml` runs on push to `main` and on PRs. It does `nix fmt -- --ci` (nixfmt, via the flake's `formatter` output), `nix flake show`, plus a pure `nix eval` of every output's derivation path (`config.system.build.toplevel.drvPath` for NixOS hosts, `activationPackage.drvPath` for home configs) — nothing is built. `nix flake check` is *not* used: it ignores `homeConfigurations` and fails on placeholder hardware configs. When adding a host, add it to the matrix. `mir-nixos-thinkpad` is commented out of the matrix until its real `hardware-configuration.nix` is committed.
 
 Run the same evals locally before pushing (see README, "Continuous integration").
 
 ## Formatting / linting
 
-`nixfmt` and `nixpkgs-fmt` are installed via `home-manager/common.nix`. There is no project-wide formatter config or pre-commit hook — formatting is manual.
+The whole repo is `nixfmt`-formatted and CI fails on drift. Run `nix fmt` from the repo root before committing (there is no pre-commit hook). This includes `hardware-configuration.nix` files — after regenerating one, run `nix fmt` before committing. `nixfmt` and `nixpkgs-fmt` are also installed via `home-manager/common.nix`.
 
 ## Architecture
 
@@ -70,7 +70,7 @@ When adding a new host, both an entry in `flake.nix` *and* the corresponding hos
 
 - `nixos/default.nix` — shared system config imported by every host (boot, networking, audio, users, nix settings, desktop env). This is the "common module" for NixOS.
 - `nixos/hosts/<host>/configuration-<host>.nix` — host entrypoint. Imports `hardware-configuration.nix`, `../../default.nix`, and any per-host services from `nixos/services/`.
-- `nixos/hosts/<host>/hardware-configuration.nix` — generated on the target machine with `sudo nixos-generate-config --show-hardware-config > nixos/hosts/<host>/hardware-configuration.nix` and **committed verbatim** (flakes only see tracked files; no `/etc/nixos` symlink needed). Never hand-edit; regenerate and re-commit when hardware changes. The thinkpad's file is currently a `{ }` placeholder stub pending regeneration on that machine — the host evaluates structurally but can't be built until then.
+- `nixos/hosts/<host>/hardware-configuration.nix` — generated on the target machine with `sudo nixos-generate-config --show-hardware-config > nixos/hosts/<host>/hardware-configuration.nix` and **committed verbatim** (then `nix fmt`) (flakes only see tracked files; no `/etc/nixos` symlink needed). Never hand-edit; regenerate and re-commit when hardware changes. The thinkpad's file is currently a `{ }` placeholder stub pending regeneration on that machine — the host evaluates structurally but can't be built until then.
 - `nixos/services/*.nix` — opt-in service modules (currently `sunshine.nix`, a thin wrapper over the nixpkgs `services.sunshine` module) imported selectively by hosts.
 
 ### Home Manager layout (`home-manager/`)

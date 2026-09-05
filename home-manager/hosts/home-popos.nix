@@ -1,11 +1,16 @@
-{config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
 
   imports = [
-      ../common.nix
-      ../common-linux.nix
-      ../services.nix
+    ../common.nix
+    ../common-linux.nix
+    ../services.nix
   ];
 
   home.username = "mir";
@@ -13,7 +18,7 @@
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-   #inputs.nixgl.packages.x86_64-linux.nixGLIntel
+    #inputs.nixgl.packages.x86_64-linux.nixGLIntel
   ];
 
   # Ghostty config comes from ../ghostty.nix, but on a foreign distro the

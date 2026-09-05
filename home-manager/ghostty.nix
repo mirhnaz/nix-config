@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 # Shared Ghostty configuration for every host — settings AND keybinds live
 # here so the terminal behaves identically everywhere. Host files only decide

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
 
@@ -7,65 +13,67 @@
     ./aliases.nix # shared shell shortcuts (fish + Omarchy bash)
   ];
 
-  home.packages = with pkgs; [
-    
-    #basics
-    git
+  home.packages =
+    with pkgs;
+    [
 
-    #shell utilities
-    grc
-    fzf
-    eza # `ll` in aliases.nix
+      #basics
+      git
 
-    #fonts
-    meslo-lgs-nf
-    fira-code
-    fira-code-symbols
-    source-code-pro
-    nerd-fonts.meslo-lg
-    nerd-fonts.ubuntu-sans
-    nerd-fonts.zed-mono
-    #nerd-fonts.iosevka
-    #nerd-fonts.iosevka-term
-    nerd-fonts.symbols-only
-    nerd-fonts.jetbrains-mono
-    meslo-lg
+      #shell utilities
+      grc
+      fzf
+      eza # `ll` in aliases.nix
 
-    #lang utils
-    ripgrep
-    fd
-    pandoc
-    shellcheck
-    nixfmt
-    nixpkgs-fmt
+      #fonts
+      meslo-lgs-nf
+      fira-code
+      fira-code-symbols
+      source-code-pro
+      nerd-fonts.meslo-lg
+      nerd-fonts.ubuntu-sans
+      nerd-fonts.zed-mono
+      #nerd-fonts.iosevka
+      #nerd-fonts.iosevka-term
+      nerd-fonts.symbols-only
+      nerd-fonts.jetbrains-mono
+      meslo-lg
 
-    #sytem utils
-    tldr
-    nmap
-    safe-rm
+      #lang utils
+      ripgrep
+      fd
+      pandoc
+      shellcheck
+      nixfmt
+      nixpkgs-fmt
 
-    #development
-    github-cli
-    cloc
-    git-lfs
+      #sytem utils
+      tldr
+      nmap
+      safe-rm
 
-    #other utils
-    #yt-dlp
-    #ffmpeg
- 
-  ]
-  ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-    # fastfetch's darwin build drags apple-sdk (~1.3 GiB) + imagemagick/vulkan
-    # into the profile closure; on macOS it comes from Homebrew instead
-    # (macos/Brewfile).
-    fastfetch
-  ];
+      #development
+      github-cli
+      cloc
+      git-lfs
+
+      #other utils
+      #yt-dlp
+      #ffmpeg
+
+    ]
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      # fastfetch's darwin build drags apple-sdk (~1.3 GiB) + imagemagick/vulkan
+      # into the profile closure; on macOS it comes from Homebrew instead
+      # (macos/Brewfile).
+      fastfetch
+    ];
 
   home.sessionVariables = {
     FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
     NIX_HOME = "$HOME/dev/nix-config";
     NIXPKGS_ALLOW_UNFREE = 1;
-    
+
     #needed for CISCO SASE VPN client to work without breaking certs on the system
     # UV_SYSTEM_CERTS = 1;
     # SSL_CERT_FILE = "$HOME/dev/CiscoSecureAccessRootCA.pem";
@@ -123,27 +131,27 @@
 
   programs.starship = {
     enable = true;
-    settings = {                                      
+    settings = {
       # user@host on the right side of the prompt — only over SSH (hostname
       # is ssh_only, username hides for the local user), so a remote shell is
       # obvious. Fish/zsh only: bash has no right prompt (starship needs
       # ble.sh there). Omarchy forces settings empty and uses its own
       # starship.toml — see hosts/home-omarchy.nix for its SSH marker.
       right_format = "$username$hostname";
-                                   
-      username = {                                    
-        show_always = false;                           
-        format = "[$user]($style)";                   
-        style_user = "yellow bold";                   
-        style_root = "red bold";
-      };     
 
-      hostname = {                                    
-        ssh_only = true;                             
-        format = "[@$hostname]($style) ";             
-        style = "green bold";                         
-      };                                              
-    };   
+      username = {
+        show_always = false;
+        format = "[$user]($style)";
+        style_user = "yellow bold";
+        style_root = "red bold";
+      };
+
+      hostname = {
+        ssh_only = true;
+        format = "[@$hostname]($style) ";
+        style = "green bold";
+      };
+    };
   };
 
   # # Configure direnv
@@ -157,14 +165,23 @@
 
   programs.fish = {
     enable = true;
-  
+
     plugins = [
       #{ name = "grc"; src = pkgs.fishPlugins.grc.src; }
-      { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
-      { name = "colored-man-pages"; src = pkgs.fishPlugins.colored-man-pages.src; }
-      { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
+      {
+        name = "fzf-fish";
+        src = pkgs.fishPlugins.fzf-fish.src;
+      }
+      {
+        name = "colored-man-pages";
+        src = pkgs.fishPlugins.colored-man-pages.src;
+      }
+      {
+        name = "sponge";
+        src = pkgs.fishPlugins.sponge.src;
+      }
     ];
-  
+
     shellInitLast = ''
       if test "$TERM" = "dumb"
         function fish_prompt
@@ -207,13 +224,13 @@
   #     c = "clear";
   #   };
 
-    # plugins = [
-    #   {
-    #     name = "fzf-tab";
-    #     src = pkgs.zsh-fzf-tab;
-    #     file = "share/fzf-tab/fzf-tab.plugin.zsh";
-    #   }
-    # ];
+  # plugins = [
+  #   {
+  #     name = "fzf-tab";
+  #     src = pkgs.zsh-fzf-tab;
+  #     file = "share/fzf-tab/fzf-tab.plugin.zsh";
+  #   }
+  # ];
 
   #   initContent = ''
   #     # Dumb terminal support (Emacs TRAMP etc.)

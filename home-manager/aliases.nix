@@ -35,9 +35,9 @@ let
   };
 
   all = aliases // abbrs;
-  posixAliases = lib.concatMapStringsSep "\n"
-    (n: "alias ${n}=${lib.escapeShellArg all.${n}}")
-    (lib.attrNames all);
+  posixAliases = lib.concatMapStringsSep "\n" (n: "alias ${n}=${lib.escapeShellArg all.${n}}") (
+    lib.attrNames all
+  );
 in
 {
   home.shellAliases = aliases; # HM fans this out to fish (+ bash/zsh if ever enabled)

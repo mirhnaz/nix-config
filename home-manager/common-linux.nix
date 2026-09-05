@@ -1,13 +1,18 @@
-{config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
 
   imports = [
-      ./common.nix
+    ./common.nix
   ];
 
   home.packages = with pkgs; [
-   
+
     #sytem utils
     nvd
     nix-du

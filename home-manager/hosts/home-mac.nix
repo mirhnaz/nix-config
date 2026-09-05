@@ -1,4 +1,11 @@
-{ config, pkgs, lib, username, homeDirectory, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  username,
+  homeDirectory,
+  ...
+}:
 
 {
 

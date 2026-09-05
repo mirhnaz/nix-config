@@ -8,4 +8,5 @@
 # mir-nixos-thinkpad system itself cannot be built.
 { ... }:
 
-{ }
+{
+}

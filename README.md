@@ -210,10 +210,14 @@ request (`nix eval` of each system's / home config's derivation path — nothing
 is built). Run the same checks locally before pushing:
 
 ```sh
+nix fmt -- --ci          # nixfmt via treefmt; plain `nix fmt` rewrites the files
 nix flake show
 nix eval --raw '.#nixosConfigurations.mir-nixos-pc.config.system.build.toplevel.drvPath'
 nix eval --raw '.#homeConfigurations."mir@mir-nixos-pc".activationPackage.drvPath'
 ```
+
+The repo is `nixfmt`-formatted and CI fails on drift, so run `nix fmt` before
+committing (also after regenerating a `hardware-configuration.nix`).
 
 ### Garbage collection
 
