@@ -15,6 +15,7 @@
     #shell utilities
     grc
     fzf
+    eza # `ll` in aliases.nix
 
     #fonts
     meslo-lgs-nf
@@ -123,8 +124,12 @@
   programs.starship = {
     enable = true;
     settings = {                                      
-      # Put user + host on the right side of the prompt.                                                    
-      # right_format = "$username$hostname";            
+      # user@host on the right side of the prompt — only over SSH (hostname
+      # is ssh_only, username hides for the local user), so a remote shell is
+      # obvious. Fish/zsh only: bash has no right prompt (starship needs
+      # ble.sh there). Omarchy forces settings empty and uses its own
+      # starship.toml — see hosts/home-omarchy.nix for its SSH marker.
+      right_format = "$username$hostname";
                                    
       username = {                                    
         show_always = false;                           

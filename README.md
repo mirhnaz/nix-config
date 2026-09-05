@@ -269,7 +269,11 @@ sudo tailscale up -authkey tskey-auth-KEY   # Get the key from the Tailscale con
 ## Application configuration
 
 The shell prompt uses [starship](https://starship.rs/), configured declaratively
-in `home-manager/common.nix` — no manual setup step is required.
+in `home-manager/common.nix` — no manual setup step is required. Over SSH the
+prompt shows `user@host` on the right so a remote shell is obvious; on Omarchy
+(whose own `starship.toml` is left untouched) the same marker comes from
+`home-manager/hosts/home-omarchy.nix` instead — a fish right prompt, and for
+bash a right-aligned line above the prompt.
 
 ### Shell shortcuts (fish + bash)
 
@@ -281,8 +285,9 @@ manage (Omarchy), add this single line at the bottom of `~/.bashrc`:
 . "$HOME/.config/hm/bashrc.sh"
 ```
 
-It loads the Home Manager session variables and the generated
-`~/.config/hm/aliases.sh`, so the same shortcuts work in bash.
+It loads the Home Manager session variables, the generated
+`~/.config/hm/aliases.sh` (so the same shortcuts work in bash), and, if
+present, `~/.config/hm/ssh-prompt.sh` (the SSH `user@host` marker above).
 
 ### Fish shell
 

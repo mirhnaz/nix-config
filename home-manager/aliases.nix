@@ -13,7 +13,9 @@
 let
   # Plain aliases — identical in every shell.
   aliases = {
-    ll = "ls -al";
+    # Names eza directly (not `ls -al`): Omarchy aliases ls to eza, fish on
+    # macOS does not, so going through `ls` gave different output per host.
+    ll = "eza -alh --group-directories-first --icons=auto";
     rm = "safe-rm";
     "..." = "cd ../..";
   };
@@ -52,8 +54,10 @@ in
     # Single Home Manager entry point for a bash that HM does not manage
     # (Omarchy). ~/.bashrc needs exactly one line, at the bottom:
     #   . "$HOME/.config/hm/bashrc.sh"
-    # Session vars first (PATH, NH_FLAKE, NIX_HOME), then the shared aliases.
+    # Session vars first (PATH, NH_FLAKE, NIX_HOME), then the shared aliases,
+    # then an optional per-host prompt hook (hosts/home-omarchy.nix writes one).
     . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
     . "${config.xdg.configHome}/hm/aliases.sh"
+    [ -r "${config.xdg.configHome}/hm/ssh-prompt.sh" ] && . "${config.xdg.configHome}/hm/ssh-prompt.sh"
   '';
 }
