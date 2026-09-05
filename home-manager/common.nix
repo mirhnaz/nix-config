@@ -44,8 +44,7 @@
       fd
       pandoc
       shellcheck
-      nixfmt
-      nixpkgs-fmt
+      nixfmt # `nix fmt` uses the flake's nixfmt-tree; this is for editors/CLI
 
       #sytem utils
       tldr
@@ -218,7 +217,13 @@
     enable = true;
 
     plugins = [
-      #{ name = "grc"; src = pkgs.fishPlugins.grc.src; }
+      # grc colourises output of common CLI tools (ping, df, ps, dig, ...); the
+      # `grc` package is in home.packages. `ls` is excluded — see the conf.d
+      # file below — so plain ls stays plain and `ll`/eza is untouched.
+      {
+        name = "grc";
+        src = pkgs.fishPlugins.grc.src;
+      }
       {
         name = "fzf-fish";
         src = pkgs.fishPlugins.fzf-fish.src;
@@ -270,6 +275,12 @@
 
     # Aliases/abbreviations live in ./aliases.nix (shared with bash on Omarchy).
   };
+
+  # Must be set before the grc plugin's conf.d runs (fish loads conf.d before
+  # config.fish, alphabetically — "00-" sorts before HM's "plugin-grc").
+  xdg.configFile."fish/conf.d/00-grc-ignore.fish".text = ''
+    set -g grc_plugin_ignore_execs ls
+  '';
 
   # programs.zsh = {
   #   enable = true;

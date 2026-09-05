@@ -219,6 +219,13 @@ nix eval --raw '.#homeConfigurations."mir@mir-nixos-pc".activationPackage.drvPat
 The repo is `nixfmt`-formatted and CI fails on drift, so run `nix fmt` before
 committing (also after regenerating a `hardware-configuration.nix`).
 
+Flake inputs are bumped automatically: `.github/workflows/update-flake.yml`
+runs `nix flake update` every Monday, evaluates every output, and opens a
+pull request (branch `update-flake-lock`) only if that passes. Merge it, then
+`git pull` and `nh home switch` on each host as usual. It can also be run by
+hand from the Actions tab. One-time repo setting: Settings → Actions → General
+→ "Allow GitHub Actions to create and approve pull requests".
+
 ### Garbage collection
 
 `nh clean user --keep 5 --keep-since 14d` runs weekly on every host
