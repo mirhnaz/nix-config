@@ -29,6 +29,9 @@ in
 
       unfocused-split-opacity = 0.6;
       split-divider-color = "#216276";
+      # Focus the split under the mouse pointer instead of needing
+      # cmd+alt+arrow to move between splits.
+      focus-follows-mouse = true;
     }
     # The Hacktober theme's selection background is ~the same as the window
     # background, making selected text invisible. Override with a visible

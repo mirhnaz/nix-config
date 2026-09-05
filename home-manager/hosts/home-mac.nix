@@ -29,6 +29,12 @@
       # macos-icon-frame = "aluminum";
       # macos-icon-ghost-color = "#ff5500";
       # macos-icon-screen-color = "#1a1a2e";
+
+      # Cmd+Enter: Ghostty's default is toggle_fullscreen, so the key never
+      # reaches the shell. Send ESC CR instead (the same bytes as Alt+Enter)
+      # so TUI apps like Claude Code can bind it (see ~/.claude/keybindings.json,
+      # where Enter = newline and alt+enter = submit).
+      keybind = "cmd+enter=text:\\x1b\\r";
     };
   };
 }
