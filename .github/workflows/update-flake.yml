@@ -68,4 +68,3 @@ jobs:
           commit-message: "flake.lock: update inputs"
           title: "flake.lock: update inputs"
           body: ${{ steps.summary.outputs.body }}
-          labels: dependencies
