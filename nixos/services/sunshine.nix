@@ -1,38 +1,13 @@
-{config, pkgs, ...}: {
+{ ... }:
 
-	boot.kernelModules = [ "uinput" ];
-	users.groups.input.members = [ "mir" ];
-	
-
-	environment.systemPackages = with pkgs; [
-	sunshine
-];
-
-services.udev.extraRules = ''
-	# Needed for sunshine streaming
-	KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"
-	'';
-
-	networking.firewall = {
-		enable = true;
-		allowedTCPPorts = [ 47990 47984 47989 48010 ];
-		allowedUDPPorts = [ 47998 47999 48000 48002 48010 ];		
-	};
-
-	security.wrappers.sunshine = {
-		owner = "root";
-		group = "root";
-		capabilities = "cap_sys_admin+p";
-		source = "${pkgs.sunshine}/bin/sunshine";
-	};
-	
-	systemd.user.services.sunshine = {
-		description = "sunshine";
-		wantedBy = [ "graphical-session.target" ];
-		enable = true;
-		serviceConfig = {
-			ExecStart = "${config.security.wrapperDir}/sunshine";
-		};
-	};
-
+{
+  # Sunshine game-stream host (pair with Moonlight). The nixpkgs module
+  # handles the uinput kernel module + udev rules, the cap_sys_admin
+  # wrapper (needed for KMS capture) and the firewall ports.
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
 }

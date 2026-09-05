@@ -109,7 +109,6 @@
 		enable = true;
 		openFirewall = true;
     domainName = "local";
-    hostName = "mir-nixos-pc";
     nssmdns4 = true;
    publish = {
 			enable = true;
@@ -155,9 +154,7 @@
   nixpkgs.config.allowUnfree = true;
   nix = {
     package = pkgs.nixVersions.latest;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
+    settings.experimental-features = [ "nix-command" "flakes" ];
   };
 
 

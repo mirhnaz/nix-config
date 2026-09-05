@@ -8,5 +8,7 @@ brew "ocrmypdf"
 brew "tesseract-lang"
 # Terminal emulator — config is managed in Nix (home-mac.nix), app via brew
 cask "ghostty"
+# System info fetch (the `ff` fish abbr); nix build pulls a 1.3 GiB apple-sdk on macOS
+brew "fastfetch"
 uv "huggingface-hub[cli]"
 uv "mlx-whisper"

@@ -1,0 +1,57 @@
+# Evaluate every flake output so a broken host or home config is caught on
+# push instead of at `nh ... switch` time. Nothing is built — `nix eval` of a
+# derivation path only needs the module system to type-check the config.
+#
+# `nix flake check` is deliberately not used: it ignores homeConfigurations
+# (not a standard flake output) and would fail on hosts whose
+# hardware-configuration.nix hasn't been committed yet.
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  flake-show:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix flake show
+
+  nixos:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - mir-nixos-pc
+          # TODO re-add once nixos/hosts/thinkpad/hardware-configuration.nix
+          # is regenerated on the ThinkPad and committed (see README).
+          # - mir-nixos-thinkpad
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix eval --raw '.#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath'
+
+  home:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # aarch64-darwin outputs evaluate fine on a Linux runner; nothing is built.
+        name:
+          - mir@mir-nixos-pc
+          - mir@mir-nixos-thinkpad
+          - mir@mir-popos-thinkpad
+          - mir@mir-omarchy-pc
+          - mir@mir-m4pro-mbp
+          - nazishhussainmir@K-H-2005735-M
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix eval --raw '.#homeConfigurations."${{ matrix.name }}".activationPackage.drvPath'

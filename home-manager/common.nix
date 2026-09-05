@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
 
@@ -27,7 +27,6 @@
     #nerd-fonts.iosevka-term
     nerd-fonts.symbols-only
     nerd-fonts.jetbrains-mono
-    meslo-lgs-nf
     meslo-lg
 
     #lang utils
@@ -41,6 +40,7 @@
     #sytem utils
     tldr
     nmap
+    safe-rm
 
     #development
     github-cli
@@ -51,6 +51,12 @@
     #yt-dlp
     #ffmpeg
  
+  ]
+  ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+    # fastfetch's darwin build drags apple-sdk (~1.3 GiB) + imagemagick/vulkan
+    # into the profile closure; on macOS it comes from Homebrew instead
+    # (macos/Brewfile).
+    fastfetch
   ];
 
   home.sessionVariables = {
@@ -62,13 +68,15 @@
     # UV_SYSTEM_CERTS = 1;
     # SSL_CERT_FILE = "$HOME/dev/CiscoSecureAccessRootCA.pem";
     # REQUESTS_CA_BUNDLE = "$HOME/dev/CiscoSecureAccessRootCA.pem";
-
+  }
+  // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
     #macos specific env
     HOMEBREW_PREFIX = "/opt/homebrew";
     HOMEBREW_CELLAR = "/opt/homebrew/Cellar";
     HOMEBREW_REPOSITORY = "/opt/homebrew";
     INFOPATH = "/opt/homebrew/share/info";
-
+  }
+  // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
     #linux specific env
     MOZ_USE_XINPUT2 = 1;
   };
@@ -79,7 +87,8 @@
     "$HOME/.nix-profile/bin/"
     "$HOME/.local/bin"
     "$HOME/.cargo/bin"
-
+  ]
+  ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
     #macos specific paths
     "/nix/var/nix/profiles/default/bin"
     "/opt/homebrew/bin"
@@ -237,5 +246,12 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  # Skip the generated `man home-configuration.nix` page. Building it evaluates
+  # every option declaration and, with Nix >= 2.34, warns "'options.json'
+  # references the store path ... without a proper context". The online docs
+  # at https://nix-community.github.io/home-manager/options.xhtml are the same
+  # content. Flip to true if you want the manpage back.
+  manual.manpages.enable = false;
 
 }

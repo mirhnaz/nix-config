@@ -6,10 +6,6 @@
       ./common.nix
   ];
 
-  home.username = "mir";
-  home.homeDirectory = "/home/mir";
-  home.stateVersion = "23.05"; # Please read the comment before changing.
-  
   home.packages = with pkgs; [
    
     #sytem utils

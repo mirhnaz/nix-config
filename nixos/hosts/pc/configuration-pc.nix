@@ -5,7 +5,6 @@
     ./hardware-configuration.nix
     ../../default.nix
     ../../services/sunshine.nix
-    ../../services/gdm.nix
   ];
 
   networking.hostName = "mir-nixos-pc";
