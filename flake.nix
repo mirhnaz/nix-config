@@ -1,5 +1,5 @@
 {
-  description = "Your new nix config";
+  description = "Naz Mir's NixOS + Home Manager config (NixOS, macOS, Pop!_OS, Omarchy)";
 
   inputs = {
     # Nixpkgspkgs.nixVersions.unstable

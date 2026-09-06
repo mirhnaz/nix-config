@@ -62,9 +62,11 @@ in
     # (Omarchy). ~/.bashrc needs exactly one line, at the bottom:
     #   . "$HOME/.config/hm/bashrc.sh"
     # Session vars first (PATH, NH_FLAKE, NIX_HOME), then the shared aliases,
-    # then an optional per-host prompt hook (hosts/home-omarchy.nix writes one).
+    # then atuin's bash hooks (common.nix writes hm/atuin.sh), then an optional
+    # per-host prompt hook (hosts/home-omarchy.nix writes one).
     . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
     . "${config.xdg.configHome}/hm/aliases.sh"
+    [ -r "${config.xdg.configHome}/hm/atuin.sh" ] && . "${config.xdg.configHome}/hm/atuin.sh"
     [ -r "${config.xdg.configHome}/hm/ssh-prompt.sh" ] && . "${config.xdg.configHome}/hm/ssh-prompt.sh"
   '';
 }
