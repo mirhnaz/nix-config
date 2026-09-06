@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+# omarchy-sync — keep Omarchy's user config (~/.config/hypr, ~/.config/omarchy)
+# in this repo as plain copies under omarchy/.
+#
+# Copies, never symlinks: Omarchy's shell saves shell.json atomically (tmp file
+# + rename) and its migrations `mv` over the Hyprland Lua files, either of
+# which would silently replace a symlink with a regular file.
+#
+#   omarchy-sync diff     show what differs between the live files and the repo
+#   omarchy-sync pull     copy live -> repo (then commit in the repo)
+#   omarchy-sync push     copy repo -> live, backing up anything overwritten to *.orig
+#   omarchy-sync status   quiet; exit 0 when in sync, 1 when drifted (fish greeting)
+#
+# The repo location comes from $NIX_HOME (set by Home Manager), falling back to
+# ~/dev/nix-config. Paths in ITEMS are relative to both ~/.config and omarchy/.
+set -euo pipefail
+
+REPO="${NIX_HOME:-$HOME/dev/nix-config}/omarchy"
+LIVE="$HOME/.config"
+
+# monitors.lua is deliberately NOT here: it carries this machine's outputs and
+# scale, and pushing it to another box would misconfigure its displays.
+ITEMS=(
+  hypr/hyprland.lua
+  hypr/bindings.lua
+  hypr/looknfeel.lua
+  hypr/input.lua
+  hypr/autostart.lua
+  hypr/session.lua
+  hypr/hyprsunset.conf
+  hypr/xdph.conf
+  omarchy/shell.json
+  omarchy/shell.toml
+  omarchy/plugins/mir.indicators
+)
+
+usage() {
+  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+  exit "${1:-0}"
+}
+
+# differs SRC DST -> 0 if they differ (or one side is missing), 1 if identical
+differs() {
+  ! diff -rqN "$1" "$2" >/dev/null 2>&1
+}
+
+# copy SRC DST — file or directory, creating parents; directories are mirrored
+# (extra files on the destination side are removed).
+copy() {
+  local src=$1 dst=$2
+  mkdir -p "$(dirname "$dst")"
+  if [ -d "$src" ]; then
+    rsync -a --delete "$src/" "$dst/"
+  else
+    cp -p "$src" "$dst"
+  fi
+}
+
+# backup PATH — keep a *.orig copy next to a file/dir about to be overwritten
+backup() {
+  local p=$1
+  rm -rf "$p.orig"
+  cp -a "$p" "$p.orig"
+}
+
+cmd_status() {
+  local drifted=0 item
+  for item in "${ITEMS[@]}"; do
+    if differs "$REPO/$item" "$LIVE/$item"; then
+      drifted=1
+    fi
+  done
+  return $drifted
+}
+
+cmd_diff() {
+  local any=0 item
+  for item in "${ITEMS[@]}"; do
+    if differs "$REPO/$item" "$LIVE/$item"; then
+      any=1
+      # -N shows missing files as added/removed instead of failing.
+      diff -ruN --label "repo/$item" --label "live/$item" "$REPO/$item" "$LIVE/$item" || true
+    fi
+  done
+  if [ $any -eq 0 ]; then
+    echo "omarchy-sync: live config and $REPO are in sync"
+  fi
+  return 0
+}
+
+cmd_pull() {
+  local n=0 item
+  for item in "${ITEMS[@]}"; do
+    if [ ! -e "$LIVE/$item" ]; then
+      echo "skip  $item (not present in $LIVE)" >&2
+      continue
+    fi
+    if differs "$REPO/$item" "$LIVE/$item"; then
+      copy "$LIVE/$item" "$REPO/$item"
+      echo "pull  $item"
+      n=$((n + 1))
+    fi
+  done
+  echo "omarchy-sync: $n item(s) copied into $REPO — review with git diff, then commit"
+}
+
+cmd_push() {
+  local n=0 item
+  for item in "${ITEMS[@]}"; do
+    if [ ! -e "$REPO/$item" ]; then
+      echo "skip  $item (not present in $REPO)" >&2
+      continue
+    fi
+    if differs "$REPO/$item" "$LIVE/$item"; then
+      if [ -e "$LIVE/$item" ]; then
+        backup "$LIVE/$item"
+        echo "push  $item (previous copy kept as $item.orig)"
+      else
+        echo "push  $item"
+      fi
+      copy "$REPO/$item" "$LIVE/$item"
+      n=$((n + 1))
+    fi
+  done
+  echo "omarchy-sync: $n item(s) copied into $LIVE"
+  if [ $n -gt 0 ]; then
+    echo "apply with: hyprctl reload && omarchy restart shell"
+  fi
+}
+
+case "${1:-}" in
+  diff) cmd_diff ;;
+  pull) cmd_pull ;;
+  push) cmd_push ;;
+  status) cmd_status ;;
+  -h | --help | help) usage 0 ;;
+  "") usage 1 ;;
+  *)
+    echo "omarchy-sync: unknown command '$1'" >&2
+    usage 1
+    ;;
+esac

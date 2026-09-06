@@ -37,12 +37,22 @@
   #
   # Keep common.nix in step with upstream: the fish greeting flags when the
   # shipped file changes from the version common.nix was copied from.
+  #
+  # It also flags when the live Omarchy config (~/.config/hypr, ~/.config/omarchy)
+  # has drifted from the copies tracked in $NIX_HOME/omarchy — see
+  # bin/omarchy-sync (on PATH via home.sessionPath in common.nix). Those files
+  # are plain copies, never HM-managed: Omarchy rewrites them in place.
   programs.fish.functions.fish_greeting = ''
     set -l shipped /usr/share/omarchy/config/starship.toml
     if test -r $shipped
       and test (sha256sum $shipped | string split ' ')[1] != b17c9b5f096fc125e97050e359171c6011d6b3c7d7e9ac28f630e75b4d4bb9db
       set_color yellow
       echo "Omarchy updated $shipped — re-sync programs.starship.settings in common.nix (then bump the hash in home-omarchy.nix)"
+      set_color normal
+    end
+    if type -q omarchy-sync; and not omarchy-sync status
+      set_color yellow
+      echo "Omarchy config differs from $NIX_HOME/omarchy — run `omarchy-sync diff`, then `omarchy-sync pull` and commit (or `omarchy-sync push` to apply the repo's copy)"
       set_color normal
     end
   '';

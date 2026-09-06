@@ -301,6 +301,31 @@ On macOS, a new fish shell warns when the Mac has drifted from
 `macos/Brewfile` (checked at most once a day); fix it with
 `brew bundle install --file=macos/Brewfile`.
 
+### Omarchy desktop config (Hyprland + shell)
+
+Omarchy's own user config — `~/.config/hypr/*.lua`, `hyprsunset.conf`,
+`xdph.conf`, `~/.config/omarchy/shell.json`, `shell.toml` and the cloned
+`mir.indicators` bar widget — is kept in git as plain copies under `omarchy/`.
+Home Manager does not manage these files and they are never symlinked:
+Omarchy's shell saves `shell.json` atomically and its migrations move new
+files over the Lua config, either of which would replace a symlink with a
+regular file. `monitors.lua` is left out because it holds one machine's
+outputs and scale.
+
+`bin/omarchy-sync` (on `PATH` via Home Manager) copies in either direction:
+
+```sh
+omarchy-sync diff   # what differs between ~/.config and omarchy/
+omarchy-sync pull   # ~/.config -> omarchy/, then commit
+omarchy-sync push   # omarchy/ -> ~/.config (overwritten files kept as *.orig)
+hyprctl reload && omarchy restart shell   # after a push
+```
+
+Day to day: edit the live files in `~/.config`, then `pull` and commit. A new
+fish shell on Omarchy warns when the live files and the repo differ. On a
+fresh Omarchy machine, run the first Home Manager switch, then `omarchy-sync
+push`.
+
 ### Shell shortcuts (fish + bash)
 
 Aliases and abbreviations are defined once in `home-manager/aliases.nix` and
