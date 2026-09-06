@@ -34,7 +34,7 @@ in
       # Fonts (the font files themselves come from the nerd-fonts.* packages
       # in common.nix / fontconfig).
       font-family = "MesloLGM Nerd Font";
-      font-size = 13;
+      font-size = 12;
       font-thicken = true;
 
       # Theme — run `ghostty +list-themes` to browse built-ins.
