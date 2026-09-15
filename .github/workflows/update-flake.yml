@@ -1,10 +1,11 @@
 # Weekly `nix flake update`, opened as a PR.
 #
-# PRs created with the default GITHUB_TOKEN do not trigger other workflows,
-# so check.yml would NOT run on the PR. Instead this job runs the same
-# checks itself, after updating the lock and before opening the PR — a PR
-# only appears if the new inputs pass. Keep the lists below in step with
-# the matrices in check.yml.
+# The PR is opened by github-actions[bot], so a check.yml run on it would be
+# held for manual approval ("first-time contributor"). check.yml therefore
+# ignores lock-only PRs, and this job runs the same checks itself, after
+# updating the lock and before opening the PR — a PR only appears if the new
+# inputs pass. check.yml runs again on main after merge. Keep the lists below
+# in step with the matrices in check.yml.
 #
 # Repo setting required once: Settings → Actions → General → Workflow
 # permissions → "Allow GitHub Actions to create and approve pull requests".

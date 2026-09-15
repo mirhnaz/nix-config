@@ -11,6 +11,11 @@ on:
   push:
     branches: [main]
   pull_request:
+    # The weekly update-flake PR only touches flake.lock and is already
+    # evaluated in that job before it's opened. A run here would only sit in
+    # "awaiting approval" (the PR author is github-actions[bot]), so skip it.
+    # PRs touching anything else still run in full; main runs on merge.
+    paths-ignore: [flake.lock]
 
 jobs:
   fmt:

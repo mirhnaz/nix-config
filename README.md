@@ -221,8 +221,10 @@ committing (also after regenerating a `hardware-configuration.nix`).
 
 Flake inputs are bumped automatically: `.github/workflows/update-flake.yml`
 runs `nix flake update` every Monday, evaluates every output, and opens a
-pull request (branch `update-flake-lock`) only if that passes. Merge it, then
-`git pull` and `nh home switch` on each host as usual. It can also be run by
+pull request (branch `update-flake-lock`) only if that passes. `check.yml`
+skips lock-only PRs (a run on a bot-authored PR would just wait for manual
+approval), so the merge button is green as soon as the PR appears. Merge it,
+then `git pull` and `nh home switch` on each host as usual. It can also be run by
 hand from the Actions tab. One-time repo setting: Settings → Actions → General
 → "Allow GitHub Actions to create and approve pull requests".
 
