@@ -27,4 +27,7 @@
   programs.ghostty.package = null;
   programs.ghostty.systemd.enable = false;
 
+  # Hostname colour in the SSH prompt marker (see common.nix).
+  programs.starship.settings.hostname.style = "blue bold";
+
 }

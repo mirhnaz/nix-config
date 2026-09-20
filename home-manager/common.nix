@@ -191,13 +191,11 @@
     settings = {
       add_newline = true;
       command_timeout = 200;
-      format = "[$directory$git_branch$git_status]($style)$character";
-
-      # user@host on the right side of the prompt — only over SSH (hostname
-      # is ssh_only, username hides for the local user), so a remote shell is
-      # obvious. Fish/zsh only: bash has no right prompt (starship needs
-      # ble.sh there) — see hosts/home-omarchy.nix for the bash fallback.
-      right_format = "$username$hostname";
+      # $hostname leads the prompt, but only over SSH (ssh_only), so a remote
+      # shell is obvious right where the eye is; local prompts are unchanged.
+      # It is on the left rather than in right_format because the right edge
+      # is easy to miss, and because bash (Omarchy) has no right prompt.
+      format = "$hostname[$directory$git_branch$git_status]($style)$character";
 
       character = {
         success_symbol = "[❯](bold cyan)";
@@ -232,17 +230,12 @@
         deleted = "";
       };
 
-      username = {
-        show_always = false;
-        format = "[$user]($style)";
-        style_user = "yellow bold";
-        style_root = "red bold";
-      };
-
       hostname = {
         ssh_only = true;
-        format = "[@$hostname]($style) ";
-        style = "green bold";
+        format = "[⇄ $hostname]($style) ";
+        # Default colour; host files override it so each machine is
+        # recognisable at a glance. Named ANSI colours only (see above).
+        style = lib.mkDefault "green bold";
       };
     };
   };

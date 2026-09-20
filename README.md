@@ -295,9 +295,10 @@ copy aside before the first switch:
 mv ~/.config/starship.toml ~/.config/starship.toml.omarchy
 ```
 
-Over SSH the prompt shows `user@host` on the right so a remote shell is
-obvious. Bash has no right prompt, so on Omarchy's bash the same marker is a
-right-aligned line above the prompt (`home-manager/hosts/home-omarchy.nix`).
+Over SSH the prompt starts with `⇄ <hostname>` so a remote shell is obvious
+(fish and Omarchy's bash alike). Each host file sets its own hostname colour
+(`programs.starship.settings.hostname.style`): macOS green (the default),
+Omarchy purple, Pop!_OS blue.
 
 On macOS, a new fish shell warns when the Mac has drifted from
 `macos/Brewfile` (checked at most once a day); fix it with
@@ -339,8 +340,8 @@ manage (Omarchy), add this single line at the bottom of `~/.bashrc`:
 ```
 
 It loads the Home Manager session variables, the generated
-`~/.config/hm/aliases.sh` (so the same shortcuts work in bash), and, if
-present, `~/.config/hm/ssh-prompt.sh` (the SSH `user@host` marker above).
+`~/.config/hm/aliases.sh` (so the same shortcuts work in bash), and atuin's
+bash hooks (`~/.config/hm/atuin.sh`).
 
 ### Fish shell
 
