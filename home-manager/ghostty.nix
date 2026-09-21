@@ -55,14 +55,7 @@ in
       # macos-icon-screen-color = "#1a1a2e";
 
       # Keybinds (one string per binding).
-      keybind = [
-        # Cmd/Super+Enter: on macOS Ghostty's default is toggle_fullscreen, so
-        # the key never reaches the shell. Send ESC CR instead (the same bytes
-        # as Alt+Enter) so TUI apps like Claude Code can bind it (see
-        # ~/.claude/keybindings.json, where Enter = newline and alt+enter =
-        # submit).
-        "cmd+enter=text:\\x1b\\r"
-      ];
+      keybind = [ ];
     }
     # The Hacktober theme's selection background is ~the same as the window
     # background, making selected text invisible. Override with a visible
