@@ -56,6 +56,10 @@
       github-cli
       cloc
       git-lfs
+      # Agent multiplexer. Replaces the curl install in ~/.local/bin, which
+      # loses to ~/.nix-profile/bin on PATH anyway; `herdr update` can't
+      # self-update a store path, so versions move with flake.lock.
+      herdr
 
       #other utils
       #yt-dlp
