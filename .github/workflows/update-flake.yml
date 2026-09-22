@@ -1,10 +1,12 @@
-# Weekly `nix flake update`, opened as a PR.
+# Weekly `nix flake update`, opened as a PR and merged if the checks pass.
 #
 # The PR is opened by github-actions[bot], so a check.yml run on it would be
 # held for manual approval ("first-time contributor"). check.yml therefore
 # ignores lock-only PRs, and this job runs the same checks itself, after
 # updating the lock and before opening the PR — a PR only appears if the new
-# inputs pass. check.yml runs again on main after merge. Keep the lists below
+# inputs pass, and is then merged by this job. That merge is pushed with
+# GITHUB_TOKEN, which never triggers other workflows, so check.yml does not
+# run again on main; the checks here are the only gate. Keep the lists below
 # in step with the matrices in check.yml.
 #
 # Repo setting required once: Settings → Actions → General → Workflow
@@ -63,9 +65,18 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - uses: peter-evans/create-pull-request@v7
+        id: pr
         with:
           branch: update-flake-lock
           delete-branch: true
           commit-message: "flake.lock: update inputs"
           title: "flake.lock: update inputs"
           body: ${{ steps.summary.outputs.body }}
+
+      # The checks above already passed on exactly this tree, so merge straight
+      # away. No-op when the lock didn't change (no PR number).
+      - name: Merge the PR
+        if: steps.pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr merge "${{ steps.pr.outputs.pull-request-number }}" --merge --delete-branch

@@ -49,7 +49,7 @@ nvd diff /run/current-system/ ./result/
 
 Run the same evals locally before pushing (see README, "Continuous integration").
 
-`.github/workflows/update-flake.yml` runs `nix flake update` every Monday (or on manual dispatch), evaluates every output the same way, and opens a PR on branch `update-flake-lock` only if that passes. The PR is authored by github-actions[bot], so a `check.yml` run on it would sit in "awaiting approval"; `check.yml` therefore has `paths-ignore: [flake.lock]` on `pull_request` and the in-job checks are the gate. `check.yml` runs again on merge. Post-merge workflow on each host: `git pull` then `nh home switch --ask`; nothing else is automated. The host lists in that workflow mirror `check.yml`'s matrices; update both when adding a host. Needs the repo setting "Allow GitHub Actions to create and approve pull requests".
+`.github/workflows/update-flake.yml` runs `nix flake update` every Monday (or on manual dispatch), evaluates every output the same way, and only if that passes opens a PR on branch `update-flake-lock` and merges it in the same job (`gh pr merge --merge --delete-branch`). The PR is authored by github-actions[bot], so a `check.yml` run on it would sit in "awaiting approval"; `check.yml` therefore has `paths-ignore: [flake.lock]` on `pull_request` and the in-job checks are the gate. The merge is pushed with `GITHUB_TOKEN`, so `check.yml` does *not* run again on main. Post-merge workflow on each host: `git pull` then `nh home switch --ask`; nothing else is automated. The host lists in that workflow mirror `check.yml`'s matrices; update both when adding a host. Needs the repo setting "Allow GitHub Actions to create and approve pull requests".
 
 ## Formatting / linting
 

@@ -220,11 +220,12 @@ The repo is `nixfmt`-formatted and CI fails on drift, so run `nix fmt` before
 committing (also after regenerating a `hardware-configuration.nix`).
 
 Flake inputs are bumped automatically: `.github/workflows/update-flake.yml`
-runs `nix flake update` every Monday, evaluates every output, and opens a
-pull request (branch `update-flake-lock`) only if that passes. `check.yml`
-skips lock-only PRs (a run on a bot-authored PR would just wait for manual
-approval), so the merge button is green as soon as the PR appears. Merge it,
-then `git pull` and `nh home switch` on each host as usual. It can also be run by
+runs `nix flake update` every Monday, evaluates every output, and only if
+that passes opens a pull request (branch `update-flake-lock`) and merges it
+straight away. `check.yml` skips lock-only PRs (a run on a bot-authored PR
+would just wait for manual approval), so the in-job checks are the gate. If
+they fail, no PR appears and the run shows red in the Actions tab. Afterwards
+just `git pull` and `nh home switch` on each host as usual. It can also be run by
 hand from the Actions tab. One-time repo setting: Settings → Actions → General
 → "Allow GitHub Actions to create and approve pull requests".
 
