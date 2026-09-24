@@ -34,8 +34,9 @@ in
     settings = {
       # Fonts (the font files themselves come from the nerd-fonts.* packages
       # in common.nix / fontconfig).
-      # Hosts may override (e.g. home-omarchy.nix matches Omarchy's font).
-      font-family = lib.mkDefault "MesloLGM Nerd Font";
+      # JetBrainsMono matches Omarchy's default terminal font. Was:
+      # font-family = "MesloLGM Nerd Font";
+      font-family = lib.mkDefault "JetBrainsMono Nerd Font";
       # Hosts may override (e.g. home-omarchy.nix, on a 32" 4K monitor).
       font-size = lib.mkDefault 14;
       font-thicken = true;

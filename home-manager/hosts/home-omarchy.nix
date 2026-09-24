@@ -70,8 +70,6 @@
   # it rewrites this file as px * 9/12 pt (12 px -> 9 pt) and breaks the
   # HM symlink.
   programs.ghostty.settings.font-size = 12;
-  # Omarchy's default terminal font (`omarchy-font-current`, alacritty.toml).
-  programs.ghostty.settings.font-family = "JetBrainsMono Nerd Font";
 
   home.packages = with pkgs; [
     # CLI-only tools are safe on a foreign distro
