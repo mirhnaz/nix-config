@@ -35,7 +35,8 @@ in
       # Fonts (the font files themselves come from the nerd-fonts.* packages
       # in common.nix / fontconfig).
       font-family = "MesloLGM Nerd Font";
-      font-size = 14;
+      # Hosts may override (e.g. home-omarchy.nix, on a 32" 4K monitor).
+      font-size = lib.mkDefault 14;
       font-thicken = true;
       minimum-contrast = 3;
       background-opacity = 1;
