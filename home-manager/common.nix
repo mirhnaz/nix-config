@@ -320,6 +320,12 @@
   # config.fish, alphabetically — "00-" sorts before HM's "plugin-grc").
   xdg.configFile."fish/conf.d/00-grc-ignore.fish".text = ''
     set -g grc_plugin_ignore_execs ls
+    # In a non-interactive shell (`ssh host 'cmd'`, macOS sshd) PATH is only
+    # extended by hm-session-vars from config.fish, which runs *after* conf.d,
+    # so the plugin's `type -q grc` fails and it prints "You need to install
+    # grc!" to stdout — polluting remote command output (broke `herdr machine
+    # add`). Put the nix profile on PATH first so grc is found.
+    contains -- $HOME/.nix-profile/bin $PATH; or set -gx PATH $HOME/.nix-profile/bin $PATH
   '';
 
   # programs.zsh = {
