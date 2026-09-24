@@ -70,6 +70,12 @@
   # it rewrites this file as px * 9/12 pt (12 px -> 9 pt) and breaks the
   # HM symlink.
   programs.ghostty.settings.font-size = 12;
+  # Follow Omarchy's theme (as its shipped ghostty config does) instead of
+  # ghosttyTheme: Omarchy's theme switcher rewrites this file and reloads
+  # Ghostty. An empty `theme =` resets it to Ghostty's default, so no
+  # ghosttyTheme colours leak through (null would print `theme = null`).
+  programs.ghostty.settings.theme = "";
+  programs.ghostty.settings.config-file = ''?"~/.local/state/omarchy/current/theme/ghostty.conf"'';
 
   home.packages = with pkgs; [
     # CLI-only tools are safe on a foreign distro

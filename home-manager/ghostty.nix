@@ -44,7 +44,8 @@ in
       background-opacity = 1;
 
       # Theme — run `ghostty +list-themes` to browse built-ins.
-      theme = ghosttyTheme;
+      # Hosts may override (home-omarchy.nix follows Omarchy's theme instead).
+      theme = lib.mkDefault ghosttyTheme;
 
       unfocused-split-opacity = 0.6;
       split-divider-color = "#216276";
