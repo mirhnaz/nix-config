@@ -24,7 +24,8 @@ let
   #ghosttyTheme = "Hacktober";
   # Other variants: "TokyoNight Storm", "TokyoNight Moon", "TokyoNight Night",
   # "TokyoNight Day" (light).
-  ghosttyTheme = "TokyoNight";
+  #ghosttyTheme = "TokyoNight";
+  ghosttyTheme = "Alabaster";
 in
 {
   programs.ghostty = {
