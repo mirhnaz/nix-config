@@ -19,7 +19,10 @@ nh os switch --ask ~/dev/nix-config/.#mir-nixos-thinkpad   # explicit flake ref
 
 # Home Manager
 nh home switch --ask
-nh home switch -c mir@mir-m4pro-mbp ~/dev/nix-config
+# macOS: the flake's Mac config is nazishhussainmir@K-H-2005735-M, but the
+# machine's hostname is "x", so nh can't auto-detect it — always pass -c.
+# (mir@mir-m4pro-mbp is the older personal-MBP entry, kept for reuse.)
+nh home switch -c nazishhussainmir@K-H-2005735-M ~/dev/nix-config
 
 # Update inputs (run from repo root)
 nix flake update
@@ -62,7 +65,7 @@ The whole repo is `nixfmt`-formatted and CI fails on drift. Run `nix fmt` from t
 Two output sets, keyed by host:
 
 - `nixosConfigurations.<host>` — full NixOS systems (`mir-nixos-pc`, `mir-nixos-thinkpad`). Modules: `./nixos/hosts/<dir>/configuration-<dir>.nix`, where `<dir>` is the short machine name (`pc`, `thinkpad`), not the hostname.
-- `homeConfigurations."mir@<host>"` — standalone Home Manager (used on macOS and Pop!_OS, and also on NixOS hosts since Home Manager is *not* imported as a NixOS module here). Modules: `./home-manager/hosts/home-<host>.nix`.
+- `homeConfigurations."<user>@<host>"` — standalone Home Manager (used on macOS and Pop!_OS, and also on NixOS hosts since Home Manager is *not* imported as a NixOS module here). Modules: `./home-manager/hosts/home-<host>.nix`. Linux entries are `mir@<host>`; there are two macOS entries sharing `home-mac.nix`: `nazishhussainmir@K-H-2005735-M` (the Mac currently in use; username/home dir passed via `extraSpecialArgs`) and `mir@mir-m4pro-mbp` (older personal MBP entry, kept).
 
 Both pass `inputs` via `specialArgs` / `extraSpecialArgs` so modules can reference flake inputs.
 
@@ -116,7 +119,7 @@ Home Manager runs standalone on top of a non-NixOS distro on these hosts. Rules 
 
 ## Conventions worth knowing
 
-- Hostnames in `flake.nix` (e.g. `mir-nixos-pc`, `mir-m4pro-mbp`) must match the machine's `networking.hostName` (NixOS) or be passed explicitly to `nh`/`home-manager`.
+- Hostnames in `flake.nix` (e.g. `mir-nixos-pc`, `mir-omarchy-pc`) must match the machine's `networking.hostName` (NixOS) / `$USER@$(hostname)` (Home Manager auto-detect) or be passed explicitly to `nh`/`home-manager`. The current Mac's hostname is `x`, not `K-H-2005735-M`, so its config never auto-detects — use `nh home switch -c nazishhussainmir@K-H-2005735-M ~/dev/nix-config` there.
 - `home.stateVersion` and `system.stateVersion` are pinned to `"23.05"` — do not bump them casually; they encode migration state, not "current version."
 - `nixpkgs.config.allowUnfree` is set both system-wide (NixOS `default.nix`) and per-user (`home-manager/common.nix`) — unfree packages work in either context.
 - Platform-specific env in `home-manager/common.nix` (Homebrew vars/paths for macOS, `MOZ_USE_XINPUT2` for Linux) is guarded with `lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin` / `isLinux` — keep new platform-specific vars behind the same guards.
