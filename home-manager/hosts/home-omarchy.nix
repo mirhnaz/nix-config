@@ -66,7 +66,7 @@
   programs.ghostty.package = null;
   programs.ghostty.systemd.enable = false;
   # 14 (the shared default) is too big on this machine's 32" 4K monitor.
-  programs.ghostty.settings.font-size = 12;
+  programs.ghostty.settings.font-size = 13;
 
   home.packages = with pkgs; [
     # CLI-only tools are safe on a foreign distro
