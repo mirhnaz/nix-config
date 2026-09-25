@@ -24,7 +24,10 @@ let
   # Other variants: "TokyoNight Storm", "TokyoNight Moon", "TokyoNight Night",
   # "TokyoNight Day" (light).
   #ghosttyTheme = "TokyoNight";
-  ghosttyTheme = "Alabaster";
+  # Alabaster (light) was too harsh for long reading; Everforest's cream text
+  # on grey-green (~8.6:1 contrast) is easier on the eyes.
+  #ghosttyTheme = "Alabaster";
+  ghosttyTheme = "Everforest Dark Med";
 in
 {
   programs.ghostty = {
@@ -39,6 +42,8 @@ in
       # Hosts may override (e.g. home-omarchy.nix, on a 32" 4K monitor).
       font-size = lib.mkDefault 14;
       font-thicken = false;
+      # Extra line spacing for easier long-form reading.
+      adjust-cell-height = "10%";
       minimum-contrast = 3;
       background-opacity = 1;
 
