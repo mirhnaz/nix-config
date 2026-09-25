@@ -31,8 +31,7 @@
       fira-code
       fira-code-symbols
       source-code-pro
-      # Provides both "MesloLGM Nerd Font" (ghostty.nix) and "MesloLGS Nerd
-      # Font Mono" (kitty in home-nixos.nix); the unpatched meslo-lg and the
+      # Provides "MesloLGM Nerd Font"; the unpatched meslo-lg and the
       # powerlevel10k meslo-lgs-nf builds were redundant with it.
       nerd-fonts.meslo-lg
       nerd-fonts.ubuntu-sans
@@ -186,7 +185,7 @@
 
   # Prompt: one starship config for every host. The layout mirrors Omarchy's
   # shipped /usr/share/omarchy/config/starship.toml (Omarchy 4.0) so the prompt
-  # looks the same on macOS, Pop!_OS and Omarchy. Colours are *named* ANSI
+  # looks the same on macOS and Omarchy. Colours are *named* ANSI
   # colours ("cyan"), never hex: that is how Omarchy's themes reach the prompt
   # (they repaint the terminal palette; starship.toml itself is never touched
   # by a theme), so theming keeps working with HM owning the file. If Omarchy

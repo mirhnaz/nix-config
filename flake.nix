@@ -1,5 +1,5 @@
 {
-  description = "Naz Mir's NixOS + Home Manager config (NixOS, macOS, Pop!_OS, Omarchy)";
+  description = "Naz Mir's Home Manager config (macOS, Omarchy)";
 
   inputs = {
     # Nixpkgspkgs.nixVersions.unstable
@@ -35,67 +35,13 @@
         system: nixpkgs.legacyPackages.${system}.nixfmt-tree
       );
 
-      nixosConfigurations = {
-
-        mir-nixos-thinkpad = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; }; # Pass flake inputs to our config
-          # > Our main nixos configuration file <
-          modules = [ ./nixos/hosts/thinkpad/configuration-thinkpad.nix ];
-        };
-
-        mir-nixos-pc = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; }; # Pass flake inputs to our config
-          # > Our main nixos configuration file <
-          modules = [
-            ./nixos/hosts/pc/configuration-pc.nix
-          ];
-        };
-
-      };
-
       homeConfigurations = {
-        "mir@mir-nixos-thinkpad" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages."x86_64-linux"; # Home-manager requires 'pkgs' instance
-          extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
-          modules = [
-            ./home-manager/hosts/home-nixos.nix
-          ];
-        };
-
-        "mir@mir-nixos-pc" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages."x86_64-linux"; # Home-manager requires 'pkgs' instance
-          extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
-          modules = [
-            ./home-manager/hosts/home-nixos.nix
-          ];
-        };
-
-        "mir@mir-popos-thinkpad" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages."x86_64-linux"; # Home-manager requires 'pkgs' instance
-          extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
-          modules = [
-            ./home-manager/hosts/home-popos.nix
-          ];
-        };
-
         "mir@mir-omarchy-pc" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."x86_64-linux"; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to our config
           modules = [
             ./home-manager/hosts/home-omarchy.nix
           ];
-        };
-
-        "mir@mir-m4pro-mbp" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages."aarch64-darwin"; # Home-manager requires 'pkgs' instance
-          extraSpecialArgs = {
-            inherit inputs; # Pass flake inputs to our config
-            username = "mir";
-            homeDirectory = "/Users/mir";
-          };
-          modules = [ ./home-manager/hosts/home-mac.nix ];
         };
 
         "nazishhussainmir@K-H-2005735-M" = home-manager.lib.homeManagerConfiguration {

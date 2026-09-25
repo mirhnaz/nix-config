@@ -7,10 +7,9 @@
 
 # Shared Ghostty configuration for every host — settings AND keybinds live
 # here so the terminal behaves identically everywhere. Host files only decide
-# where the app comes from: NixOS hosts get pkgs.ghostty installed via this
-# module's default package; macOS (Homebrew install) and foreign-distro Linux
-# (pacman/apt install) set `programs.ghostty.package = null` so HM only
-# writes ~/.config/ghostty/config.
+# where the app comes from: macOS (Homebrew install) and Omarchy (pacman
+# install) both set `programs.ghostty.package = null` so HM only writes
+# ~/.config/ghostty/config.
 #
 # macos-* keys are accepted on every platform and ignored off macOS, and the
 # `cmd` key modifier is an alias for `super` on Linux, so nothing here needs

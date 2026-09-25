@@ -7,13 +7,9 @@
 }:
 
 {
-  # Omarchy (Arch) host — Home Manager runs standalone here, like Pop!_OS.
-  #
-  # Deliberately NOT imported:
-  #   ../common-linux.nix — pulls in alacritty/vscode/windsurf as nix packages.
-  #     Omarchy already ships alacritty/chromium via pacman, and nix-built GUI
-  #     apps on a non-NixOS distro have OpenGL/driver issues (would need nixGL).
-  #   ../services.nix — dconf/GNOME + virt-manager settings; Omarchy is Hyprland.
+  # Omarchy (Arch) host — Home Manager runs standalone here. GUI apps come
+  # from pacman: nix-built GUI apps on a non-NixOS distro have OpenGL/driver
+  # issues (would need nixGL).
   imports = [
     ../common.nix
   ];

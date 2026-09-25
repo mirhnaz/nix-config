@@ -34,22 +34,6 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix flake show
 
-  nixos:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        host:
-          - mir-nixos-pc
-          # TODO re-add once nixos/hosts/thinkpad/hardware-configuration.nix
-          # is regenerated on the ThinkPad and committed (see README).
-          # - mir-nixos-thinkpad
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-      - run: nix eval --raw '.#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath'
-
   home:
     runs-on: ubuntu-latest
     strategy:
@@ -57,11 +41,7 @@ jobs:
       matrix:
         # aarch64-darwin outputs evaluate fine on a Linux runner; nothing is built.
         name:
-          - mir@mir-nixos-pc
-          - mir@mir-nixos-thinkpad
-          - mir@mir-popos-thinkpad
           - mir@mir-omarchy-pc
-          - mir@mir-m4pro-mbp
           - nazishhussainmir@K-H-2005735-M
     steps:
       - uses: actions/checkout@v4

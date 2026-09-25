@@ -21,8 +21,8 @@ instead.
 #    uv:   curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 1. Nix layer (Home Manager) — the bulk of your CLI + dotfiles
-nh home switch -c mir@mir-m4pro-mbp ~/dev/nix-config
-#   (use mir@mir-air-mbp or the matching host output as appropriate)
+nh home switch -c nazishhussainmir@K-H-2005735-M ~/dev/nix-config
+#   (or add a <user>@<host> output to flake.nix for a new Mac)
 
 # 2. Homebrew layer — formulae, casks, and uv tools in one shot
 brew bundle install --file=~/dev/nix-config/macos/Brewfile

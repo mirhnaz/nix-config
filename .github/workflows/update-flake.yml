@@ -38,15 +38,8 @@ jobs:
           set -euo pipefail
           nix fmt -- --ci
           nix flake show
-          for host in mir-nixos-pc; do
-            nix eval --raw ".#nixosConfigurations.${host}.config.system.build.toplevel.drvPath"; echo
-          done
           for name in \
-            mir@mir-nixos-pc \
-            mir@mir-nixos-thinkpad \
-            mir@mir-popos-thinkpad \
             mir@mir-omarchy-pc \
-            mir@mir-m4pro-mbp \
             nazishhussainmir@K-H-2005735-M; do
             nix eval --raw ".#homeConfigurations.\"${name}\".activationPackage.drvPath"; echo
           done
