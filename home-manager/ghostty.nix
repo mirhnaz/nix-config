@@ -46,7 +46,7 @@ in
       font-size = lib.mkDefault 14;
       font-thicken = false;
       # Extra line spacing for easier long-form reading.
-      adjust-cell-height = "10%";
+      adjust-cell-height = "5%";
       minimum-contrast = 3;
       background-opacity = 1;
 
