@@ -21,6 +21,8 @@
       git
 
       #shell utilities
+      # Use explicitly (e.g. `grc ping ...`); automatic Fish wrappers can
+      # intercept terminal applications and pollute remote command output.
       grc
       fzf
       eza # `ll` in aliases.nix
@@ -257,13 +259,6 @@
     enable = true;
 
     plugins = [
-      # grc colourises output of common CLI tools (ping, df, ps, dig, ...); the
-      # `grc` package is in home.packages. `ls` is excluded — see the conf.d
-      # file below — so plain ls stays plain and `ll`/eza is untouched.
-      {
-        name = "grc";
-        src = pkgs.fishPlugins.grc.src;
-      }
       {
         name = "fzf-fish";
         src = pkgs.fishPlugins.fzf-fish.src;
@@ -315,18 +310,6 @@
 
     # Aliases/abbreviations live in ./aliases.nix (shared with bash on Omarchy).
   };
-
-  # Must be set before the grc plugin's conf.d runs (fish loads conf.d before
-  # config.fish, alphabetically — "00-" sorts before HM's "plugin-grc").
-  xdg.configFile."fish/conf.d/00-grc-ignore.fish".text = ''
-    set -g grc_plugin_ignore_execs ls
-    # In a non-interactive shell (`ssh host 'cmd'`, macOS sshd) PATH is only
-    # extended by hm-session-vars from config.fish, which runs *after* conf.d,
-    # so the plugin's `type -q grc` fails and it prints "You need to install
-    # grc!" to stdout — polluting remote command output (broke `herdr machine
-    # add`). Put the nix profile on PATH first so grc is found.
-    contains -- $HOME/.nix-profile/bin $PATH; or set -gx PATH $HOME/.nix-profile/bin $PATH
-  '';
 
   # programs.zsh = {
   #   enable = true;
