@@ -39,14 +39,16 @@ in
     settings = {
       # Fonts (the font files themselves come from the nerd-fonts.* packages
       # in common.nix / fontconfig).
-      # JetBrainsMono matches Omarchy's default terminal font. Was:
+      # Trying IBM Plex Mono (Nerd Font build "BlexMono"): wider and more
+      # open than JetBrainsMono, for long-form reading. Was:
       # font-family = "MesloLGM Nerd Font";
-      font-family = lib.mkDefault "JetBrainsMono Nerd Font";
+      # font-family = lib.mkDefault "JetBrainsMono Nerd Font"; # Omarchy's default
+      font-family = lib.mkDefault "BlexMono Nerd Font";
       # Hosts may override (e.g. home-omarchy.nix, on a 32" 4K monitor).
       font-size = lib.mkDefault 14;
-      font-thicken = false;
-      # Extra line spacing for easier long-form reading.
-      adjust-cell-height = "5%";
+      # Trying Ghostty's defaults for these. Was:
+      # font-thicken = false;
+      # adjust-cell-height = "5%";
       minimum-contrast = 3;
       background-opacity = 1;
 

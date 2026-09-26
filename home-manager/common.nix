@@ -40,6 +40,7 @@
       #nerd-fonts.iosevka-term
       nerd-fonts.symbols-only
       nerd-fonts.jetbrains-mono
+      nerd-fonts.blex-mono # IBM Plex Mono (ghostty.nix)
 
       #lang utils
       ripgrep
