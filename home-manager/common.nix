@@ -91,14 +91,9 @@
     HOMEBREW_CELLAR = "/opt/homebrew/Cellar";
     HOMEBREW_REPOSITORY = "/opt/homebrew";
     INFOPATH = "/opt/homebrew/share/info";
-  }
-  // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-    #linux specific env
-    MOZ_USE_XINPUT2 = 1;
   };
 
   home.sessionPath = [
-    "$HOME/.config/emacs/bin"
     "$NIX_HOME/bin"
     "$HOME/.nix-profile/bin/"
     "$HOME/.local/bin"
@@ -176,13 +171,6 @@
       eval "$(${lib.getExe config.programs.atuin.package} init bash ${lib.escapeShellArgs config.programs.atuin.flags})"
     fi
   '';
-
-  programs.btop = {
-    enable = true;
-    settings = {
-      shown_boxes = "cpu gpu0 proc";
-    };
-  };
 
   # Prompt: one starship config for every host. The layout mirrors Omarchy's
   # shipped /usr/share/omarchy/config/starship.toml (Omarchy 4.0) so the prompt
@@ -361,6 +349,10 @@
   #   enable = true;
   #   enableZshIntegration = true;
   # };
+
+  # Same on every host. Encodes Home Manager's migration state, not "the
+  # current version" — don't bump it casually.
+  home.stateVersion = "23.05";
 
   fonts.fontconfig.enable = true;
   #Allow unfree

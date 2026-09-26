@@ -16,12 +16,10 @@
 
   home.username = "mir";
   home.homeDirectory = "/home/mir";
-  home.stateVersion = "23.05"; # Please read the comment before changing.
 
-  # Omarchy's theme system owns ~/.config/btop — if HM also writes
-  # btop.conf, activation refuses to clobber it and Omarchy theme
-  # switching would break against a store symlink. Let Omarchy keep it.
-  programs.btop.enable = lib.mkForce false;
+  # btop is deliberately not configured here (it's in home-mac.nix only):
+  # Omarchy's theme system owns ~/.config/btop, and an HM store symlink would
+  # break its theme switching.
 
   # starship.toml IS Home-Manager-owned here, unlike btop: common.nix mirrors
   # Omarchy's shipped starship.toml and uses named colours, so Omarchy themes

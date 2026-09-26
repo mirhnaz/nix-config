@@ -25,9 +25,7 @@ Each host is a standalone Home Manager configuration in `flake.nix`,
 `homeConfigurations."<user>@<host>"`, built from
 `home-manager/hosts/home-<host>.nix`.
 
-The repo is expected to live at `~/dev/nix-config`. The `bin/rename-and-link.sh`
-helper backs up a system-generated file and replaces it with a symlink into this
-repo, bringing it under version control.
+The repo is expected to live at `~/dev/nix-config`.
 
 ## Initial setup
 
@@ -65,22 +63,17 @@ curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
 ## Home Manager (standalone)
 
-Used on every host (macOS, Omarchy). Link the generated config
-into the repo before the first switch.
+Used on every host (macOS, Omarchy). Home Manager builds straight from the
+flake, so there's nothing to link into `~/.config/home-manager`. The first
+switch runs Home Manager from its flake, since it isn't installed yet;
+`-b backup` moves any existing dotfile it would overwrite to `*.backup`:
 
 ```sh
-cd ~/dev/nix-config
-
-# Initialize Home Manager; places a config at ~/.config/home-manager/home.nix
-nix run home-manager/master -- init --switch
-
-# Drop the generated flake and link our host file in its place
-rm ~/.config/home-manager/flake.*
-~/dev/nix-config/bin/rename-and-link.sh ~/.config/home-manager/home.nix ~/dev/nix-config/home-manager/hosts/home-<host>.nix
-
-# Initial evaluation with flakes
-home-manager switch --flake ~/dev/nix-config/.#<user>@<host>
+nix run home-manager/master -- switch -b backup --flake ~/dev/nix-config/.#<user>@<host>
 ```
+
+After that, `nh home switch --ask` (see [Everyday commands](#everyday-commands))
+does the same.
 
 ## macOS setup
 
@@ -95,12 +88,11 @@ notes below.
    xcode-select --install
    ```
 
-2. **Home Manager** uses the macOS host file and flake target when you reach the
+2. **Home Manager** uses the Mac's flake target when you reach the
    [Home Manager](#home-manager-standalone) step:
 
    ```sh
-   ~/dev/nix-config/bin/rename-and-link.sh ~/.config/home-manager/home.nix ~/dev/nix-config/home-manager/hosts/home-mac.nix
-   home-manager switch --flake ~/dev/nix-config/.#nazishhussainmir@K-H-2005735-M
+   nix run home-manager/master -- switch -b backup --flake ~/dev/nix-config/.#nazishhussainmir@K-H-2005735-M
    ```
 
 3. **Set fish as the login shell** — see
@@ -235,8 +227,8 @@ Things to avoid afterwards:
   switch with `-b backup`) and switch again.
 - **Letting Home Manager manage files Omarchy owns** (`~/.bashrc`, hypr,
   waybar, alacritty, btop): Omarchy's theme switching rewrites them, which
-  breaks against read-only store symlinks. That's why `home-omarchy.nix`
-  disables btop and doesn't import any GUI packages.
+  breaks against read-only store symlinks. That's why btop is configured only
+  in `home-mac.nix` and `home-omarchy.nix` doesn't install any GUI packages.
 - **Over non-interactive SSH** (`ssh host 'cmd'`), Omarchy's `.bashrc` returns
   before the Home Manager line, so aliases and `NH_FLAKE` aren't set. Use
   `ssh host 'bash -lc "nh home switch ~/dev/nix-config"'` with an explicit
@@ -380,18 +372,6 @@ Home-Manager-provided fish (not on Omarchy, which relies on bash):
 sudo sh -c 'echo $HOME/.nix-profile/bin/fish >> /etc/shells'
 chsh -s $HOME/.nix-profile/bin/fish
 ```
-
-### Doom Emacs
-
-Install Doom Emacs, then run `doom doctor` to check for issues. Back up an
-existing `~/.emacs.d` first:
-
-```sh
-mv ~/.emacs.d ~/.emacs.d.orig
-```
-
-`~/.config/emacs/bin` is already on `PATH` via `home-manager/common.nix`. The
-Doom config itself (`~/.config/doom`) is not managed by this repo.
 
 ## License
 
