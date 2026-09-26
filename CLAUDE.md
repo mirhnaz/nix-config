@@ -66,7 +66,7 @@ When adding a new program: prefer `home-manager/common.nix` if it should run eve
 
 ### Ghostty (`home-manager/ghostty.nix`)
 
-Shared Ghostty config, imported by every host via `common.nix`: theme (a `ghosttyTheme` let-binding at the top, with theme-conditional selection-color fixes), MesloLGM Nerd Font, split settings, macOS icon, and all keybinds. **Every** Ghostty setting belongs here so hosts stay identical. Changing `ghosttyTheme` re-themes every machine. Per-host differences stay in host files:
+Shared Ghostty config, imported by every host via `common.nix`: theme (a `ghosttyTheme` let-binding at the top, with theme-conditional selection-color fixes), font (`BlexMono Nerd Font`, i.e. IBM Plex Mono, from `nerd-fonts.blex-mono` in `common.nix`), split settings, macOS icon, and all keybinds. **Every** Ghostty setting belongs here so hosts stay identical. Changing `ghosttyTheme` re-themes every machine. Per-host differences stay in host files:
 
 - **macOS**: the app comes from Homebrew (the nix ghostty package is Linux-only) → `package = null`. `macos-*` settings and keybinds also live in `ghostty.nix` (accepted everywhere, no-ops off macOS) — don't add Ghostty settings to host files.
 - **Omarchy**: `package = null` **and** `systemd.enable = false` (the HM module's systemd unit requires a package); install the app from the distro (`sudo pacman -S ghostty` on Omarchy).
@@ -74,6 +74,7 @@ Shared Ghostty config, imported by every host via `common.nix`: theme (a `ghostt
 ### Helper scripts (`bin/`)
 
 - `rename-and-link.sh <source> <target>` — backs up `source` to `source.orig` and replaces it with a symlink pointing at `target`. Used to bring system-generated files (e.g. `~/.config/home-manager/home.nix`) under repo control. See README for the exact incantations used during initial setup.
+- `macos-apps` — regenerates the inventory block of `macos/apps.md` from `/Applications` (Homebrew cask / App Store / work MDM / Apple / manual, with matching casks from Homebrew's index). Python, so it runs from fish; only the text between the GENERATED markers is rewritten, and the work-MDM list is read from the `managed:start/end` markers.
 - `omarchy-sync <diff|pull|push|status>` — copies Omarchy's user config between `~/.config` and `omarchy/` (see the foreign-distro section).
 
 ## Foreign-distro host (Omarchy)

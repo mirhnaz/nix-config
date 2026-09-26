@@ -13,6 +13,7 @@ evaluated by Nix and activated on a host.
 - [Installing Nix](#installing-nix)
 - [Home Manager (standalone)](#home-manager-standalone)
 - [macOS setup](#macos-setup)
+- [Omarchy setup](#omarchy-setup)
 - [Everyday commands](#everyday-commands)
 - [Services](#services)
 - [Application configuration](#application-configuration)
@@ -49,7 +50,7 @@ session instead of installing it.
 
 ```sh
 nix shell --extra-experimental-features nix-command --extra-experimental-features flakes nixpkgs#git
-git clone git@github.com:nazmir/nix-config.git
+mkdir -p ~/dev && git clone git@github.com:mirhnaz/nix-config.git ~/dev/nix-config
 ```
 
 ## Installing Nix
@@ -120,16 +121,126 @@ notes below.
    brew bundle install --file=~/dev/nix-config/macos/Brewfile
 
    # Global uv tools, if you skipped brew or want them brew-independent
-   while read -r t; do [ -n "$t" ] && [ "${t#\#}" = "$t" ] && uv tool install "$t"; done \
-     < ~/dev/nix-config/macos/uv-tools.txt
+   # (grep + xargs, so it works from fish as well as bash)
+   grep -v -e '^#' -e '^$' ~/dev/nix-config/macos/uv-tools.txt | xargs -n1 uv tool install
 
    # Hand-downloaded / App Store apps — open the checklist and reinstall each
    open ~/dev/nix-config/macos/apps.md
    ```
 
+   After installing or removing apps, run `macos-apps` (`bin/macos-apps`, on
+   `PATH` via Home Manager) to regenerate the inventory in `macos/apps.md`: it
+   sorts every app in `/Applications` into Homebrew, App Store, work-managed,
+   Apple or manual, and names the Homebrew cask for manual installs that have
+   one.
+
    See [`macos/README.md`](macos/README.md) for the full bootstrap order, how to
    re-snapshot state after installing new things, and when adopting nix-darwin
    becomes worthwhile.
+
+## Omarchy setup
+
+[Omarchy](https://omarchy.org/) (Arch + Hyprland) runs standalone Home Manager
+on top of the distro, but Omarchy owns and rewrites most of its dotfiles
+(`~/.bashrc`, `~/.config/hypr/`, waybar, alacritty, btop), so setup differs
+from the generic [Home Manager](#home-manager-standalone) flow: Home Manager
+only manages fish, git, starship, Ghostty's config and CLI packages, and
+Omarchy's own customisations are copied in with `omarchy-sync`.
+
+1. **Install Omarchy** and set the hostname to match the flake output (or add a
+   new `mir@<host>` entry to `flake.nix` and a `home-manager/hosts/` file):
+
+   ```sh
+   sudo hostnamectl set-hostname mir-omarchy-pc
+   ```
+
+2. **SSH key and clone** — `git` ships with Omarchy, so no `nix shell` is
+   needed. Generate a key and add it to GitHub as in
+   [Generate SSH keys](#generate-ssh-keys), then:
+
+   ```sh
+   mkdir -p ~/dev && git clone git@github.com:mirhnaz/nix-config.git ~/dev/nix-config
+   ```
+
+3. **Install Nix** with the Determinate Systems installer (see
+   [Installing Nix](#installing-nix)), then open a new terminal so
+   `/etc/profile.d/nix.sh` puts `nix` on `PATH`.
+
+4. **Move Omarchy's starship config aside.** Home Manager owns
+   `~/.config/starship.toml` (the shared config in `common.nix` mirrors
+   Omarchy's and uses named colours, so Omarchy themes still apply):
+
+   ```sh
+   mv ~/.config/starship.toml ~/.config/starship.toml.omarchy
+   ```
+
+5. **First Home Manager switch.** `-b backup` moves any file Home Manager
+   would overwrite (e.g. Omarchy's `~/.config/git/config`) to `*.backup`:
+
+   ```sh
+   nix run home-manager/master -- switch -b backup --flake ~/dev/nix-config/.#mir@mir-omarchy-pc
+   ```
+
+   From then on, `nh home switch --ask` works.
+
+6. **Hook Home Manager into bash.** Omarchy's login shell stays bash (Omarchy
+   relies on it; don't `chsh` to fish, launch `fish` from bash instead). Add
+   this line near the bottom of `~/.bashrc`, after Omarchy's own lines:
+
+   ```sh
+   . "$HOME/.config/hm/bashrc.sh"
+   ```
+
+   It loads the Home Manager session variables (`NH_FLAKE`, `PATH`), the shared
+   aliases and atuin's bash hooks. See
+   [Shell shortcuts](#shell-shortcuts-fish--bash).
+
+7. **Apps come from the distro, not Nix** (Nix-built GUI apps need nixGL on a
+   foreign distro). Home Manager only writes Ghostty's config; install the app
+   with Omarchy's package helper, which is a no-op if it's already there:
+
+   ```sh
+   omarchy pkg add ghostty
+   ```
+
+   On Omarchy, Ghostty follows the active Omarchy theme rather than
+   `ghosttyTheme` in `ghostty.nix`.
+
+8. **Apply the Omarchy customisations** tracked in `omarchy/` (Hyprland Lua
+   config, shell settings, the `mir.indicators` bar widget). `monitors.lua` is
+   deliberately not tracked, so set displays up per machine.
+
+   ```sh
+   omarchy-sync push                        # repo -> ~/.config, originals kept as *.orig
+   hyprctl reload && omarchy restart shell
+   ```
+
+   See [Omarchy desktop config](#omarchy-desktop-config-hyprland--shell) for
+   the day-to-day `diff` / `pull` workflow.
+
+9. **Optional: SSH access from the Mac** for remote edits and rollouts:
+
+   ```sh
+   omarchy pkg add openssh
+   sudo systemctl enable --now sshd
+   # then, on the Mac:
+   ssh-copy-id mir@mir-omarchy-pc
+   ```
+
+Things to avoid afterwards:
+
+- **Omarchy's text-size slider** (`omarchy display text size`) edits
+  `~/.config/ghostty/config` in place, replacing Home Manager's symlink, and
+  the next switch fails with "would be clobbered". Move the file aside (or
+  switch with `-b backup`) and switch again.
+- **Letting Home Manager manage files Omarchy owns** (`~/.bashrc`, hypr,
+  waybar, alacritty, btop): Omarchy's theme switching rewrites them, which
+  breaks against read-only store symlinks. That's why `home-omarchy.nix`
+  disables btop and doesn't import any GUI packages.
+- **Over non-interactive SSH** (`ssh host 'cmd'`), Omarchy's `.bashrc` returns
+  before the Home Manager line, so aliases and `NH_FLAKE` aren't set. Use
+  `ssh host 'bash -lc "nh home switch ~/dev/nix-config"'` with an explicit
+  flake path.
 
 ## Everyday commands
 
