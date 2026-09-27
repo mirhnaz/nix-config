@@ -26,6 +26,7 @@
       grc
       fzf
       eza # `ll` in aliases.nix
+      glow # render Markdown in the terminal
 
       #fonts
       fira-code
@@ -113,7 +114,9 @@
       user.email = "mirnaz.hussain@gmail.com";
       user.name = "Naz Mir";
       init.defaultBranch = "main";
-      pull.rebase = true;
+      # Plain `git pull` only fast-forwards and aborts on divergence; reconcile
+      # deliberately with `git pull --rebase` (the flag overrides this).
+      pull.ff = "only";
       push.default = "simple";
     };
   };
