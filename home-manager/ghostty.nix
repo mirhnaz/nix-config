@@ -13,7 +13,7 @@
 #
 # macos-* keys are accepted on every platform and ignored off macOS, and the
 # `cmd` key modifier is an alias for `super` on Linux, so nothing here needs
-# to be platform-guarded.
+# to be platform-guarded (except `command`, below).
 
 let
   # The active Ghostty theme. Some settings below are theme-specific and only
@@ -81,6 +81,12 @@ in
       selection-background = "#f5c355";
       selection-foreground = "#1a1a1a";
       foreground = "#979797";
+    }
+    # Linux (Omarchy): the login shell stays bash (Omarchy relies on it), but
+    # terminals open fish for its inline history suggestions. macOS already
+    # logs in to fish, so it keeps Ghostty's default.
+    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+      command = lib.getExe config.programs.fish.package;
     };
   };
 }

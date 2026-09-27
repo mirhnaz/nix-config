@@ -130,7 +130,7 @@
     };
   };
 
-  # Shell history: one SQLite database, fuzzy Ctrl+R / Up search, shared by
+  # Shell history: one SQLite database, fuzzy Ctrl+R search, shared by
   # every shell on the host. HM wires the fish side itself
   # (enableFishIntegration defaults on). Its bash integration only reaches
   # `programs.bash`, which is not enabled here (Omarchy owns ~/.bashrc), so the
@@ -138,6 +138,10 @@
   # ~/.config/hm/bashrc.sh (aliases.nix) — see below.
   programs.atuin = {
     enable = true;
+    # Leave Up to the shell: Omarchy's inputrc binds it to prefix history
+    # search (type `git`, press Up) and fish does the same natively; atuin's
+    # Up binding replaced both with its full-screen search.
+    flags = [ "--disable-up-arrow" ];
     settings = {
       update_check = false; # the binary comes from nixpkgs
     };
