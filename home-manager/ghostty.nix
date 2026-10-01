@@ -28,9 +28,9 @@ let
   # on grey-green (~8.6:1 contrast) is easier on the eyes.
   #ghosttyTheme = "Alabaster";
   #ghosttyTheme = "Everforest Dark Med";
-  #ghosttyTheme = "Doom One";
+  ghosttyTheme = "Doom One";
   # Trying Nord (#d8dee9 on #2e3440, ~9.2:1) against Everforest/Doom One.
-  ghosttyTheme = "Nord";
+  #ghosttyTheme = "Nord";
 in
 {
   programs.ghostty = {
