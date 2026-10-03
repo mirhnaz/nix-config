@@ -44,7 +44,7 @@
           ];
         };
 
-        "nazishhussainmir@K-H-2005735-M" = home-manager.lib.homeManagerConfiguration {
+        "nazishhussainmir@kfin-mbp-mac" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."aarch64-darwin"; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = {
             inherit inputs; # Pass flake inputs to our config

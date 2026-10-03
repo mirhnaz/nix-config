@@ -92,7 +92,7 @@ notes below.
    [Home Manager](#home-manager-standalone) step:
 
    ```sh
-   nix run home-manager/master -- switch -b backup --flake ~/dev/nix-config/.#nazishhussainmir@K-H-2005735-M
+   nix run home-manager/master -- switch -b backup --flake ~/dev/nix-config/.#nazishhussainmir@kfin-mbp-mac
    ```
 
 3. **Set fish as the login shell** — see
@@ -241,8 +241,6 @@ rebuilds.
 
 ```sh
 nh home switch --ask        # Ask for confirmation before applying
-# The Mac's hostname doesn't match its flake output, so name it:
-nh home switch -c nazishhussainmir@K-H-2005735-M ~/dev/nix-config
 ```
 
 ### Update flake inputs
@@ -261,7 +259,7 @@ built). Run the same checks locally before pushing:
 nix fmt -- --ci          # nixfmt via treefmt; plain `nix fmt` rewrites the files
 nix flake show
 nix eval --raw '.#homeConfigurations."mir@mir-omarchy-pc".activationPackage.drvPath'
-nix eval --raw '.#homeConfigurations."nazishhussainmir@K-H-2005735-M".activationPackage.drvPath'
+nix eval --raw '.#homeConfigurations."nazishhussainmir@kfin-mbp-mac".activationPackage.drvPath'
 ```
 
 The repo is `nixfmt`-formatted and CI fails on drift, so run `nix fmt` before

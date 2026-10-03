@@ -40,7 +40,7 @@ jobs:
           nix flake show
           for name in \
             mir@mir-omarchy-pc \
-            nazishhussainmir@K-H-2005735-M; do
+            nazishhussainmir@kfin-mbp-mac; do
             nix eval --raw ".#homeConfigurations.\"${name}\".activationPackage.drvPath"; echo
           done
 

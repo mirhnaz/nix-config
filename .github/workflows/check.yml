@@ -42,7 +42,7 @@ jobs:
         # aarch64-darwin outputs evaluate fine on a Linux runner; nothing is built.
         name:
           - mir@mir-omarchy-pc
-          - nazishhussainmir@K-H-2005735-M
+          - nazishhussainmir@kfin-mbp-mac
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main

@@ -13,11 +13,8 @@ A personal Nix flake managing user (Home Manager) configuration on macOS (aarch6
 The repo lives at `~/dev/nix-config`. The `nh` helper is installed via Home Manager (see `home-manager/common.nix`) and is the preferred entrypoint:
 
 ```sh
-# Home Manager (Omarchy auto-detects from $USER@$(hostname))
+# Home Manager (auto-detects from $USER@$(hostname) on both hosts)
 nh home switch --ask
-# macOS: the flake's Mac config is nazishhussainmir@K-H-2005735-M, but the
-# machine's hostname is "x", so nh can't auto-detect it — always pass -c.
-nh home switch -c nazishhussainmir@K-H-2005735-M ~/dev/nix-config
 
 # Update inputs (run from repo root)
 nix flake update
@@ -48,7 +45,7 @@ The whole repo is `nixfmt`-formatted and CI fails on drift. Run `nix fmt` from t
 
 ### Flake outputs (`flake.nix`)
 
-- `homeConfigurations."<user>@<host>"` — standalone Home Manager. Modules: `./home-manager/hosts/home-<host>.nix`. Two entries: `mir@mir-omarchy-pc` and `nazishhussainmir@K-H-2005735-M` (the Mac; `home-mac.nix`, username/home dir passed via `extraSpecialArgs`).
+- `homeConfigurations."<user>@<host>"` — standalone Home Manager. Modules: `./home-manager/hosts/home-<host>.nix`. Two entries: `mir@mir-omarchy-pc` and `nazishhussainmir@kfin-mbp-mac` (the Mac; `home-mac.nix`, username/home dir passed via `extraSpecialArgs`).
 
 Each passes `inputs` via `extraSpecialArgs` so modules can reference flake inputs.
 
@@ -91,7 +88,7 @@ Home Manager runs standalone on top of a non-NixOS distro here. Rules that keep 
 
 ## Conventions worth knowing
 
-- Hostnames in `flake.nix` (e.g. `mir-omarchy-pc`) must match the machine's `$USER@$(hostname)` (Home Manager auto-detect) or be passed explicitly to `nh`/`home-manager`. The current Mac's hostname is `x`, not `K-H-2005735-M`, so its config never auto-detects — use `nh home switch -c nazishhussainmir@K-H-2005735-M ~/dev/nix-config` there.
+- Hostnames in `flake.nix` (e.g. `mir-omarchy-pc`) must match the machine's `$USER@$(hostname)` (Home Manager auto-detect) or be passed explicitly to `nh`/`home-manager`. The Mac's entry is named after its hostname `kfin-mbp-mac` (renamed 2026-10 from `K-H-2005735-M`); if the Mac's hostname changes again, rename the flake entry and the CI host lists to match.
 - `home.stateVersion` is pinned to `"23.05"` once, in `common.nix` — do not bump it casually; it encodes migration state, not "current version."
 - `nixpkgs.config.allowUnfree` is set in `home-manager/common.nix`.
 - Platform-specific env in `home-manager/common.nix` (Homebrew vars/paths for macOS) is guarded with `lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin` / `isLinux` — keep new platform-specific vars behind the same guards.
