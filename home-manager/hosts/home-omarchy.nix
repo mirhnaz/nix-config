@@ -72,6 +72,12 @@
   programs.ghostty.settings.theme = "";
   programs.ghostty.settings.config-file = ''?"~/.local/state/omarchy/current/theme/ghostty.conf"'';
 
+  # git over https to GitHub uses gh's existing login (gh is from pacman). The
+  # cos repos here are https clones of private repos, so plain `git fetch` needs
+  # it. `gh auth setup-git` can't do this: ~/.config/git/config is an HM store
+  # symlink. Not on the Mac, whose remotes are ssh.
+  programs.git.settings.credential."https://github.com".helper = "!gh auth git-credential";
+
   home.packages = with pkgs; [
     # CLI-only tools are safe on a foreign distro
     nvd
