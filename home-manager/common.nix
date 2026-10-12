@@ -58,6 +58,7 @@
       #development
       github-cli
       cloc
+      tokei
       git-lfs
       # Agent multiplexer. Replaces the curl install in ~/.local/bin, which
       # loses to ~/.nix-profile/bin on PATH anyway; `herdr update` can't
