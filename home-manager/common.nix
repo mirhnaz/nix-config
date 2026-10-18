@@ -100,6 +100,7 @@
     "$HOME/.nix-profile/bin/"
     "$HOME/.local/bin"
     "$HOME/.cargo/bin"
+    "$HOME/dev/cos/scripts"
   ]
   ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
     #macos specific paths
