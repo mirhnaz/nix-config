@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   username,
   homeDirectory,
   ...
@@ -15,6 +16,10 @@
 
   home.username = username;
   home.homeDirectory = homeDirectory;
+
+  # Remove this pin once the newer Atuin passes its macOS integration tests.
+  programs.atuin.package =
+    inputs.nixpkgs-atuin.legacyPackages.${pkgs.stdenv.hostPlatform.system}.atuin;
 
   # Mac only: on Omarchy, Omarchy's theme system owns ~/.config/btop.
   programs.btop = {

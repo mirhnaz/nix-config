@@ -5,6 +5,10 @@
     # Nixpkgspkgs.nixVersions.unstable
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Temporary macOS Atuin pin: 18.24.4 fails its Pi session integration tests.
+    # Keep its complete dependency set so the existing 18.23.0 build is reused.
+    nixpkgs-atuin.url = "github:nixos/nixpkgs/02c087f3fe673c9e317f206a627cb6b910336dbe";
+
     # Home manager
     home-manager = {
       url = "github:nix-community/home-manager";

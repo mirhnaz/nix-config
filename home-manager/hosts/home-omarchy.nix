@@ -59,12 +59,11 @@
   # instead; HM only writes ~/.config/ghostty/config.
   programs.ghostty.package = null;
   programs.ghostty.systemd.enable = false;
-  # No font size here: 14 (the shared default) is too big on this machine's
-  # 32" 4K monitor, and an empty `font-size =` resets to Ghostty's default
-  # (12 on Linux). Was: programs.ghostty.settings.font-size = 12;
+  # One point below Ghostty's Linux default (12), for this machine's
+  # 32" 4K monitor.
   # Don't use Omarchy's text-size slider: it `sed -i`s this file (as
   # px * 9/12 pt), replacing the HM symlink so the next switch fails.
-  programs.ghostty.settings.font-size = "";
+  programs.ghostty.settings.font-size = 11;
   # Follow Omarchy's theme (as its shipped ghostty config does) instead of
   # ghosttyTheme: Omarchy's theme switcher rewrites this file and reloads
   # Ghostty. An empty `theme =` resets it to Ghostty's default, so no
@@ -83,6 +82,7 @@
     nvd
     killall
     ethtool
+    android-tools # adb and fastboot
 
     # lang utils
     nixd

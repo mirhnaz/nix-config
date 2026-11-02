@@ -45,7 +45,7 @@ in
       # font-family = lib.mkDefault "JetBrainsMono Nerd Font"; # Omarchy's default
       font-family = lib.mkDefault "BlexMono Nerd Font";
       # Hosts may override (e.g. home-omarchy.nix, on a 32" 4K monitor).
-      font-size = lib.mkDefault 14;
+      font-size = lib.mkDefault 13;
       # Trying Ghostty's defaults for these. Was:
       # font-thicken = false;
       # adjust-cell-height = "5%";
