@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "mir.switch-user",
+  "name": "Switch user",
+  "version": "1.0.0",
+  "author": "mir",
+  "description": "Lock this session and show the account chooser",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "SwitchUser.qml"
+  },
+  "barWidget": {
+    "displayName": "Switch user",
+    "description": "Lock this session and show the account chooser",
+    "category": "System",
+    "allowMultiple": false
+  }
+}

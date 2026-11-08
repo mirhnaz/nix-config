@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# Build the known-working native plugin; never load/unload/reload Hyprland.
+set -euo pipefail
+case "${1:-}" in
+  -h | --help)
+    cat <<'HELP'
+Usage: omarchy-scrolloverview-setup [--check]
+
+Build the source revision recorded in omarchy/system/scrolloverview/pins.json
+against matching Arch Hyprland headers and install scrolloverview.so under
+~/.local/share/hyprland-scroll-overview. No sudo, compositor reload, or plugin
+load is performed. --check only verifies dependencies, headers and installation.
+HELP
+    exit 0
+    ;;
+  '' | --check) ;;
+  *) echo 'Usage: omarchy-scrolloverview-setup [--check]' >&2; exit 1 ;;
+esac
+((EUID != 0)) || { echo 'Run as the desktop user, without sudo.' >&2; exit 1; }
+for command in git python3 make g++ pkg-config; do
+  command -v "$command" >/dev/null || { printf 'Missing build tool: %s\n' "$command" >&2; exit 1; }
+done
+repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+pins="$repo_dir/omarchy/system/scrolloverview/pins.json"
+read -r repository plugin_commit hyprland_commit < <(python3 - "$pins" <<'PY'
+import json
+import re
+from pathlib import Path
+import sys
+pin = json.loads(Path(sys.argv[1]).read_text())
+assert pin['repository'] == 'https://github.com/yayuuu/hyprland-scroll-overview.git'
+assert all(re.fullmatch('[0-9a-f]{40}', pin[key]) for key in ('pluginCommit', 'hyprlandCommit'))
+print(pin['repository'], pin['pluginCommit'], pin['hyprlandCommit'])
+PY
+)
+version_header=/usr/include/hyprland/src/version.h
+[[ -r $version_header ]] || { echo "Missing Arch Hyprland headers: $version_header" >&2; exit 1; }
+installed_commit=$(sed -n 's/^#define GIT_COMMIT_HASH[[:space:]]*"\([^"]*\)".*/\1/p' "$version_header")
+[[ $installed_commit == "$hyprland_commit" ]] || {
+  printf 'Hyprland headers are %s; this plugin pin requires %s.\nReview compatibility and update pins.json first.\n' "$installed_commit" "$hyprland_commit" >&2
+  exit 1
+}
+if pkg-config --exists 'lua5.4 >= 5.4'; then
+  lua_package=lua5.4
+else
+  lua_package=lua
+fi
+pkg-config --print-errors --exists pixman-1 libdrm hyprland pangocairo libinput libudev wayland-server xkbcommon "$lua_package >= 5.4"
+destination="$HOME/.local/share/hyprland-scroll-overview"
+if [[ ${1:-} == --check ]]; then
+  [[ -s $destination/scrolloverview.so ]] || { echo "Plugin not installed at $destination/scrolloverview.so" >&2; exit 1; }
+  printf 'Build dependencies and Hyprland headers match the recorded pin.\nPlugin exists: %s/scrolloverview.so\nRecorded source revision: %s\n' "$destination" "$plugin_commit"
+  exit 0
+fi
+
+stage=$(mktemp -d -t scrolloverview-build.XXXXXXXX)
+trap 'rm -rf -- "$stage"' EXIT
+# Reuse existing Git objects when available; never alter that working checkout.
+# Checkout below still selects the recorded commit, ignoring local edits.
+if [[ -d $destination/.git ]] && git -C "$destination" cat-file -e "$plugin_commit^{commit}" 2>/dev/null; then
+  git clone --no-hardlinks --no-checkout "$destination" "$stage/source"
+  git -C "$stage/source" remote set-url origin "$repository"
+else
+  git clone --no-checkout "$repository" "$stage/source"
+fi
+git -C "$stage/source" checkout --detach "$plugin_commit"
+[[ $(git -C "$stage/source" rev-parse HEAD) == "$plugin_commit" ]]
+make -C "$stage/source" all CXX=g++ LUA_PKG="$lua_package"
+[[ -s $stage/source/scrolloverview.so ]]
+mkdir -p "$destination"
+if [[ -e $destination/scrolloverview.so ]]; then
+  backup=$(mktemp "$destination/scrolloverview.so.backup.XXXXXXXX")
+  cp -p "$destination/scrolloverview.so" "$backup"
+  printf 'Previous plugin saved at %s\n' "$backup"
+fi
+# Rename a new inode into place, preserving any running compositor's mapping.
+install -m 0755 "$stage/source/scrolloverview.so" "$stage/scrolloverview.so"
+temporary_plugin=$(mktemp "$destination/.scrolloverview.XXXXXXXX")
+trap 'rm -rf -- "$stage"; rm -f -- "$temporary_plugin"' EXIT
+install -m 0755 "$stage/scrolloverview.so" "$temporary_plugin"
+mv -f -- "$temporary_plugin" "$destination/scrolloverview.so"
+printf 'Installed %s/scrolloverview.so from %s.\nNo compositor reload or plugin load was performed.\n' "$destination" "$plugin_commit"

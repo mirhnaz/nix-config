@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# Resume a family desktop, or open Ayaan's standard tty3 login on demand.
+# Never unlock another user: their Omarchy lock screen authenticates them.
+set -Eeuo pipefail
+
+fail() {
+  printf 'Switch user: %s\n' "$*" >&2
+  if command -v notify-send >/dev/null; then
+    notify-send --urgency=critical 'Switch user failed' "$*" || true
+  fi
+  exit 1
+}
+
+case "$(id -un)" in
+  mir) target=ayaan ;;
+  ayaan) target=mir ;;
+  *) fail 'This switcher is configured for mir and ayaan.' ;;
+esac
+[[ ${1:-} == '' || ${1:-} == --check ]] || fail 'Usage: omarchy-family-switch [--check]'
+getent passwd "$target" >/dev/null || fail "Account $target does not exist."
+seat=${XDG_SEAT:-seat0}
+[[ $seat == seat0 ]] || fail 'Only seat0 is configured.'
+
+# Enumerate with logind rather than assuming a VT number or creating a second
+# compositor for an already logged-in user (notably sddm-autologin on SDDM 0.21).
+sessions=$(loginctl list-sessions --no-legend --no-pager) || fail 'Cannot list login sessions.'
+matches=()
+tty3_user=''
+tty3_session=''
+unsupported_target_session=false
+while IFS=' ' read -r session _uid user session_seat _rest; do
+  [[ $session_seat == "$seat" ]] || continue
+  properties=$(loginctl show-session "$session" -p Type -p Class -p State -p Service -p TTY) ||
+    fail "Cannot inspect session $session."
+  properties=$'\n'"$properties"$'\n'
+  [[ $properties == *$'\nClass=user\n'* ]] || continue
+  [[ $properties == *$'\nState=online\n'* || $properties == *$'\nState=active\n'* ]] || continue
+  if [[ $properties == *$'\nTTY=tty3\n'* ]]; then
+    [[ -z $tty3_session ]] || fail 'More than one login claims tty3; switching cancelled.'
+    tty3_user=$user
+    tty3_session=$session
+  fi
+  [[ $user == "$target" ]] || continue
+  if [[ $properties == *$'\nType=wayland\n'* &&
+        ( $properties == *$'\nService=sddm\n'* || $properties == *$'\nService=sddm-autologin\n'* ) ]]; then
+    : # Normal SDDM desktop, including mir's original autologin session.
+  elif [[ $target == ayaan && $properties == *$'\nService=login\n'* &&
+          $properties == *$'\nTTY=tty3\n'* ]] && pgrep -u ayaan -x Hyprland >/dev/null; then
+    : # Ayaan's local login starts the same UWSM desktop on tty3.
+  else
+    if [[ $properties != *$'\nTTY=tty3\n'* || $properties != *$'\nService=login\n'* ]]; then
+      unsupported_target_session=true
+    fi
+    continue
+  fi
+  matches+=("$session")
+done <<< "$sessions"
+((${#matches[@]} <= 1)) || fail "Multiple desktops exist for $target; resolve them before switching."
+# Resolve and validate the route before locking. Never invoke SDDM's greeter:
+# it selected the occupied tty1 and froze the seat on this machine.
+route=desktop
+if ((${#matches[@]} == 0)); then
+  [[ $target == ayaan ]] || fail "No running desktop for $target; automatic login is only configured for mir at boot."
+  [[ $unsupported_target_session == false ]] || fail 'Ayaan already has a different local session; inspect it before starting another desktop.'
+  [[ -z $tty3_user || $tty3_user == ayaan ]] || fail "tty3 is occupied by $tty3_user; switching cancelled."
+  systemctl is-active --quiet getty@tty3.service || fail 'The tty3 login is not ready; run the on-demand installer first.'
+  busctl --system --timeout=5s introspect org.freedesktop.login1 \
+    /org/freedesktop/login1/seat/seat0 org.freedesktop.login1.Seat >/dev/null ||
+    fail 'Cannot access the system terminal-switch interface.'
+  route=login
+fi
+
+if [[ ${1:-} == --check ]]; then
+  if [[ $route == desktop ]]; then
+    printf 'Would lock %s and activate %s session %s.\n' "$(id -un)" "$target" "${matches[0]}"
+  else
+    printf 'Would lock mir and open Ayaan\047s standard login on tty3.\n'
+  fi
+  exit 0
+fi
+
+exec 9>"${XDG_RUNTIME_DIR:?No user runtime directory}/omarchy-family-switch.lock"
+flock -n 9 || exit 0
+omarchy-system-lock || fail 'The lock command failed.'
+secure=false
+for ((attempt=0; attempt<50; attempt++)); do
+  # isLocked can mean only "requested". Wait for the compositor to confirm it.
+  if omarchy-shell lock status | jq -e '.secure == true' >/dev/null 2>&1; then
+    secure=true
+    break
+  fi
+  sleep 0.1
+done
+[[ $secure == true ]] || fail 'The desktop did not confirm a secure lock; switching cancelled.'
+
+if [[ $route == desktop ]]; then
+  loginctl activate "${matches[0]}" || fail "Cannot activate $target's desktop."
+elif [[ -n $tty3_session ]]; then
+  loginctl activate "$tty3_session" || fail 'Cannot resume the tty3 login.'
+else
+  busctl --system --timeout=5s call org.freedesktop.login1 \
+    /org/freedesktop/login1/seat/seat0 org.freedesktop.login1.Seat SwitchTo u 3 ||
+    fail 'Cannot switch to the tty3 login.'
+fi

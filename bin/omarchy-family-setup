@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Install the tracked family switching customisation on this Omarchy host.
+set -euo pipefail
+case "${1:-}" in
+  -h | --help)
+    cat <<'HELP'
+Usage: omarchy-family-setup
+
+Install password-based on-demand login for ayaan on tty3, the shared switch
+helper, and bar widgets for mir and ayaan. Both accounts must already have
+their Omarchy desktops initialized. Requests sudo and saves rollback backups.
+Does not reboot, restart SDDM, log out, or switch the physical screen.
+HELP
+    exit 0
+    ;;
+  '') ;;
+  *) echo 'Usage: omarchy-family-setup [--help]' >&2; exit 1 ;;
+esac
+repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+installer="$repo_dir/omarchy/system/family-switch/install-on-demand.sh"
+if ((EUID == 0)); then
+  exec /usr/bin/bash "$installer"
+fi
+exec sudo /usr/bin/bash "$installer"

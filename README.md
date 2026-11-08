@@ -325,7 +325,7 @@ On macOS, a new fish shell warns when the Mac has drifted from
 
 Omarchy's own user config — `~/.config/hypr/*.lua`, `hyprsunset.conf`,
 `xdph.conf`, `~/.config/omarchy/shell.json`, `shell.toml` and the cloned
-`mir.indicators` bar widget — is kept in git as plain copies under `omarchy/`.
+`mir.indicators` and `mir.switch-user` bar widgets — is kept in git as plain copies under `omarchy/`.
 Home Manager does not manage these files and they are never symlinked:
 Omarchy's shell saves `shell.json` atomically and its migrations move new
 files over the Lua config, either of which would replace a symlink with a
@@ -345,6 +345,110 @@ Day to day: edit the live files in `~/.config`, then `pull` and commit. A new
 fish shell on Omarchy warns when the live files and the repo differ. On a
 fresh Omarchy machine, run the first Home Manager switch, then `omarchy-sync
 push`.
+
+### ScrollOverview plugin
+
+The tracked `hyprland.lua` loads
+`~/.local/share/hyprland-scroll-overview/scrolloverview.so`, and `bindings.lua`
+binds **Super+Ctrl+G** to toggle the overview across monitors. These are captured
+from the working live configuration and travel through `omarchy-sync`.
+
+The compiled plugin is not committed or built with Nix. The known-working
+source/Hyprland pair is recorded in
+[`omarchy/system/scrolloverview/pins.json`](omarchy/system/scrolloverview/pins.json).
+The source is [yayuuu/hyprland-scroll-overview](https://github.com/yayuuu/hyprland-scroll-overview),
+at `07a944e4d16f11d2d9be6ce10bea74a6f1e5f2ae` for Hyprland 0.56.2 commit
+`efb50993780079460b0cbed1363e2166a2de1d9f`.
+
+On a new installation, build the plugin **before** pushing the Lua config:
+
+```sh
+omarchy-scrolloverview-setup
+# Before the repo's bin directory is on PATH:
+bash ~/dev/nix-config/bin/omarchy-scrolloverview-setup
+omarchy-sync push
+```
+
+The helper checks native build tools, pkg-config dependencies and the exact
+Hyprland header commit, builds the pinned source in a temporary directory using
+upstream's Makefile, and installs the shared library with a backup. It reuses
+the existing source checkout as a cache when available. It does not invoke
+sudo, load/unload plugins, or reload the compositor. Native dependencies come
+from Arch: `base-devel`, `git`, `pkgconf` and the development headers named by
+upstream's Makefile; missing pkg-config dependencies are reported before a build.
+
+To check the current installation without changing it:
+
+```sh
+omarchy-scrolloverview-setup --check
+```
+
+After a Hyprland upgrade, review plugin compatibility and update both revisions
+in `pins.json` before rebuilding. The helper refuses mismatched headers rather
+than building the old plugin against a new compositor. It checks installed
+headers, not the running compositor; if the package was updated mid-session,
+the running and installed versions may differ. Do not load a rebuilt plugin
+into an incompatible running session. The current working setup needs no rebuild.
+
+### Omarchy family user switching
+
+The working `mir`/`ayaan` setup is tracked in
+[`omarchy/system/family-switch`](omarchy/system/family-switch). It uses Omarchy's
+existing UWSM desktop command and the upstream
+[omarchy-multi-user](https://github.com/drodol/omarchy-multi-user) bar widget,
+with a local helper that avoids SDDM's failing second-greeter path.
+
+Boot still automatically enters `mir`. The first Switch user opens tty3's
+normal username/password login; signing in as `ayaan` automatically starts his
+desktop. Later switches lock the current desktop and resume the other one,
+retaining both users' open applications. No passwords are stored. Ayaan's
+desktop is not started automatically at boot.
+
+After cloning this repo, or after changing these system-side files, run:
+
+```sh
+omarchy-family-setup
+# Before the repo's bin directory is on PATH:
+bash ~/dev/nix-config/bin/omarchy-family-setup
+```
+
+This explicit setup command requests sudo. It installs the shared helper at
+`/usr/local/bin/omarchy-family-switch`, merges a tty3-only block into Ayaan's
+`.bash_profile`, enables the standard password-based `getty@tty3.service`, and
+installs each user's switch widget before their bar's power button. It saves
+backups and prints a rollback command. It does not reboot, restart SDDM, log
+anyone out, or switch the screen. The setup is intentionally outside Home
+Manager activation: HM manages neither system login services nor Ayaan's home.
+
+Prerequisites: `mir` and `ayaan` must already exist with initialized, independent
+Omarchy desktops and plain `shell.json` files; Ayaan needs a Bash login shell
+and a password. Account creation, administrator permissions, user provisioning,
+and SDDM's boot-autologin configuration remain separate. The old custom SDDM
+Family theme is not required by this workaround and is not installed here.
+
+`omarchy-sync` tracks mir's widget and bar config. The explicit setup command
+generates Ayaan's widget from that tracked widget; do not copy his entire home
+or manage it through mir's Home Manager configuration. The former
+`~/dev/omarchy-multi-user` working directory is no longer needed to reproduce
+the switching customisation.
+
+Validation without changing live sessions:
+
+```sh
+python3 omarchy/system/family-switch/check-switching.py
+shellcheck bin/omarchy-family-setup bin/omarchy-sync omarchy/system/family-switch/*.sh \
+  omarchy/system/family-switch/omarchy-family-switch omarchy/system/family-switch/ayaan-tty3.bash
+/usr/local/bin/omarchy-family-switch --check  # from mir's desktop terminal, no sudo
+```
+
+UWSM's startup preflight must explicitly allow tty3 (`uwsm check may-start -v
+3`); its default permits only tty1. The profile block excludes SSH, graphical
+terminals, other consoles, and already-running UWSM desktops.
+
+Keep SSH open for the first live test after deployment. Verify `mir → ayaan →
+mir → ayaan` retains both desktops' windows. If the physical seat freezes on
+mir's occupied tty1, the recovery that worked on this host is `sudo chvt 3`
+followed by `sudo chvt 1`; restarting SDDM would instead terminate desktops.
 
 ### Shell shortcuts (fish + bash)
 

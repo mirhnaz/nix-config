@@ -28,3 +28,6 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- ScrollOverview, built at upstream's pin for Hyprland 0.56.2.
+hl.plugin.load(os.getenv("HOME") .. "/.local/share/hyprland-scroll-overview/scrolloverview.so")

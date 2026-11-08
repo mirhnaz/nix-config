@@ -72,6 +72,8 @@ Shared Ghostty config, imported by every host via `common.nix`: theme (a `ghostt
 
 - `macos-apps` — regenerates the inventory block of `macos/apps.md` from `/Applications` (Homebrew cask / App Store / work MDM / Apple / manual, with matching casks from Homebrew's index). Python, so it runs from fish; only the text between the GENERATED markers is rewritten, and the work-MDM list is read from the `managed:start/end` markers.
 - `omarchy-sync <diff|pull|push|status>` — copies Omarchy's user config between `~/.config` and `omarchy/` (see the foreign-distro section).
+- `omarchy-family-setup` — explicit sudo installer for `omarchy/system/family-switch/`: on-demand authenticated tty3 login for ayaan, the shared switching helper, and both users' bar widgets. Keep it out of HM activation. It does not restart SDDM or log anyone out. Mir's widget is also tracked by `omarchy-sync`; Ayaan's is generated from it.
+- `omarchy-scrolloverview-setup [--check]` — native source build pinned by `omarchy/system/scrolloverview/pins.json`, installed under `~/.local/share/hyprland-scroll-overview`. Requires the matching Arch Hyprland header commit; never loads or reloads the plugin. Build before pushing the Lua config to a new machine. Keep the binary out of Git and use the distro toolchain, not Nix-built GUI dependencies.
 
 ## Foreign-distro host (Omarchy)
 

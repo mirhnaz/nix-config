@@ -33,6 +33,7 @@ ITEMS=(
   omarchy/shell.json
   omarchy/shell.toml
   omarchy/plugins/mir.indicators
+  omarchy/plugins/mir.switch-user
 )
 
 usage() {
