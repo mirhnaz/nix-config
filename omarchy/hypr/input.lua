@@ -1,6 +1,9 @@
 -- Keep only your personal input overrides here. Uncommented settings below
 -- replace Omarchy's defaults.
 
+-- Allow a longer hold before repeating, then repeat at a gentler rate.
+hl.config({ input = { repeat_delay = 500, repeat_rate = 30 } })
+
 -- Keyboard layout and options.
 -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input
 -- hl.config({

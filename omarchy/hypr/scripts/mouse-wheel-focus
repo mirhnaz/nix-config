@@ -1,0 +1,14 @@
+#!/bin/bash
+# Super + wheel navigates columns only on scrolling workspaces.
+case "${1:-}" in
+  forward) direction=r; workspace=m+1 ;;
+  back) direction=l; workspace=m-1 ;;
+  *) exit 2 ;;
+esac
+
+# Use Omarchy's mode reader: floating workspaces retain a tiled layout underneath.
+if [[ $(omarchy-hyprland-workspace-layout-current) == scrolling ]]; then
+  hyprctl dispatch "hl.dsp.focus({ direction = \"$direction\" })"
+else
+  hyprctl dispatch "hl.dsp.focus({ workspace = \"$workspace\" })"
+fi

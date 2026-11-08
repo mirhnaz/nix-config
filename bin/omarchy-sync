@@ -27,6 +27,7 @@ ITEMS=(
   hypr/input.lua
   hypr/autostart.lua
   hypr/session.lua
+  hypr/scripts/mouse-wheel-focus
   hypr/hyprsunset.conf
   hypr/xdph.conf
   omarchy/shell.json

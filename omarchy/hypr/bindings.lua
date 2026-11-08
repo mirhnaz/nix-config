@@ -30,3 +30,7 @@
 
 -- learnomarchy: learn to fly Omarchy (https://github.com/MaximilianHansen/learnomarchy)
 o.bind("SUPER + ALT + L", "Learnomarchy", "/home/mir/.local/bin/learnomarchy")
+
+-- Super + wheel: navigate scrolling columns, otherwise switch workspaces.
+o.rebind("SUPER + mouse_down", "Next scrolling window or workspace", "bash ~/.config/hypr/scripts/mouse-wheel-focus forward")
+o.rebind("SUPER + mouse_up", "Previous scrolling window or workspace", "bash ~/.config/hypr/scripts/mouse-wheel-focus back")
