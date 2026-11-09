@@ -43,6 +43,7 @@ let
     "dev/practo-rust"
     "dev/spacemacs-windsurf"
     "dev/tv-vibehack"
+    "dev/nix-config"
   ];
 
   marker = "Managed by Home Manager (home-manager/claude.nix)";
