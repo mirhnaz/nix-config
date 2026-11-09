@@ -32,7 +32,15 @@ let
   # touched where they exist (so a repo absent on one host isn't conjured).
   personalDirs = [
     "personal"
-    # "dev/science-chatbot"
+    "dev/thingsand-systems"
+    "dev/safe-rm-rust"
+    "dev/science-chatbot"
+    "dev/omarchy-wallpapers"
+    "dev/SimpleNoteTaker"
+    "dev/timer-app"
+    "dev/practo-rust"
+    "dev/spacemacs-windsurf"
+    "dev/tv-vibehack"
   ];
 
   marker = "Managed by Home Manager (home-manager/claude.nix)";

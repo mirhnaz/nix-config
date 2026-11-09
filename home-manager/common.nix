@@ -12,6 +12,7 @@
     ./ghostty.nix
     ./pele.nix # Mermaid-to-SVG command for agents; uses the host's Node
     ./aliases.nix # shared shell shortcuts (fish + Omarchy bash)
+    ./claude.nix # direnv + personal Claude Code account per directory
   ];
 
   home.packages =
@@ -244,6 +245,7 @@
     };
   };
 
+  # direnv is enabled in claude.nix; this old block is kept as reference.
   # # Configure direnv
   # programs.direnv = {
   #   enable = true;
