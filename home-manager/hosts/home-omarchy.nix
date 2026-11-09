@@ -59,11 +59,11 @@
   # instead; HM only writes ~/.config/ghostty/config.
   programs.ghostty.package = null;
   programs.ghostty.systemd.enable = false;
-  # One point below Ghostty's Linux default (12), for this machine's
+  # Two points below Ghostty's Linux default (12), for this machine's
   # 32" 4K monitor.
   # Don't use Omarchy's text-size slider: it `sed -i`s this file (as
   # px * 9/12 pt), replacing the HM symlink so the next switch fails.
-  programs.ghostty.settings.font-size = 11;
+  programs.ghostty.settings.font-size = 10;
   # Follow Omarchy's theme (as its shipped ghostty config does) instead of
   # ghosttyTheme: Omarchy's theme switcher rewrites this file and reloads
   # Ghostty. An empty `theme =` resets it to Ghostty's default, so no
