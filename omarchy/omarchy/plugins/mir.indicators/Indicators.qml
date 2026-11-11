@@ -165,12 +165,24 @@ BarWidget {
     ? activeVerticalBlock.implicitHeight + inactiveVerticalArea.implicitHeight
     : Math.max(activeHorizontalBlock.implicitHeight, inactiveHorizontalArea.implicitHeight)
 
+  // Local change: the stock target "omarchy.indicators" is already taken by the
+  // built-in widget (our handler was never registered), and the stock body
+  // called an undefined root.broadcast(). `omarchy-shell mir.indicators refresh`.
   IpcHandler {
-    target: "omarchy.indicators"
+    target: "mir.indicators"
 
     function refresh(): void {
-      root.broadcast("refresh")
+      root.refreshRequested()
     }
+  }
+
+  // Local change: Omarchy's scripts (screen recorder, reminders, DND/nightlight
+  // keybinds) only poke the built-in widget, so poll to stay in sync.
+  Timer {
+    interval: 5000
+    running: true
+    repeat: true
+    onTriggered: root.refreshRequested()
   }
 
   Timer {
