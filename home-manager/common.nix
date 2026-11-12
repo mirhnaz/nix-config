@@ -62,6 +62,9 @@
       cloc
       tokei
       git-lfs
+      # Cloudflare's unified CLI. On Omarchy this replaces the lazy
+      # `npm:cf` from /etc/mise/conf.d/omarchy-tools.toml.
+      cf
       # Agent multiplexer. Replaces the curl install in ~/.local/bin, which
       # loses to ~/.nix-profile/bin on PATH anyway; `herdr update` can't
       # self-update a store path, so versions move with flake.lock.
