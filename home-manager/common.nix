@@ -65,6 +65,9 @@
       # Cloudflare's unified CLI. On Omarchy this replaces the lazy
       # `npm:cf` from /etc/mise/conf.d/omarchy-tools.toml.
       cf
+      # Workers dev/deploy, pinned by flake.lock so every host runs the same
+      # version (instead of whatever `npx wrangler` resolves to that day).
+      wrangler
       # Agent multiplexer. Replaces the curl install in ~/.local/bin, which
       # loses to ~/.nix-profile/bin on PATH anyway; `herdr update` can't
       # self-update a store path, so versions move with flake.lock.
