@@ -18,8 +18,12 @@
 #
 # Add a personal repo: append it to `personalDirs` and switch. A repo's own
 # .envrc is never overwritten (activation warns instead); add the export by
-# hand there. A nested .envrc under ~/personal must start with `source_up`,
+# hand there. A nested .envrc under ~/personal or ~/dev must start with `source_up`,
 # or it replaces ours (direnv only loads the nearest one).
+#
+# Keep a folder inside a personal one on the work account: append it to
+# `workDirs`. It gets an .envrc that sets nothing, which stops direnv from
+# walking up to the personal one.
 #
 # The account: the personal setup token
 # (~/.mantle/server/claude/personal.token, mode 600, on every host) is exported as CLAUDE_CODE_OAUTH_TOKEN, the same store Mantle
@@ -34,6 +38,7 @@ let
   # touched where they exist (so a repo absent on one host isn't conjured).
   personalDirs = [
     "personal"
+    "dev" # everything under ~/dev; the entries below keep working standalone
     "dev/thingsand-systems"
     "dev/safe-rm-rust"
     "dev/science-chatbot"
@@ -44,6 +49,12 @@ let
     "dev/spacemacs-windsurf"
     "dev/tv-vibehack"
     "dev/nix-config"
+  ];
+
+  # Relative to $HOME: folders inside a personal dir that stay on the work
+  # account. Only touched where they exist.
+  workDirs = [
+    "dev/mantle"
   ];
 
   marker = "Managed by Home Manager (home-manager/claude.nix)";
@@ -57,6 +68,12 @@ let
     if [ -r "${tokenFile}" ]; then
       export CLAUDE_CODE_OAUTH_TOKEN="$(cat "${tokenFile}")"
     fi
+  '';
+  workEnvrc = pkgs.writeText "claude-work.envrc" ''
+    # ${marker} — work Claude account.
+    # Deliberately no `source_up`: this file shadows the personal .envrc of a
+    # parent folder, so `claude` here is the default ~/.claude profile.
+    unset CLAUDE_CONFIG_DIR CLAUDE_CODE_OAUTH_TOKEN
   '';
   direnv = "${config.programs.direnv.package}/bin/direnv";
 in
@@ -76,15 +93,18 @@ in
     done
 
     run mkdir -p "$HOME/personal"
-    for d in ${lib.escapeShellArgs personalDirs}; do
-      d="$HOME/$d"
+    for entry in ${
+      lib.escapeShellArgs (map (d: "${envrc}:${d}") personalDirs ++ map (d: "${workEnvrc}:${d}") workDirs)
+    }; do
+      src="''${entry%%:*}"
+      d="$HOME/''${entry#*:}"
       [ -d "$d" ] || continue
       if [ -e "$d/.envrc" ] && ! grep -qF ${lib.escapeShellArg marker} "$d/.envrc"; then
-        warnEcho "claude.nix: $d/.envrc exists and isn't ours; add: export CLAUDE_CONFIG_DIR=\"${profileDir}\""
+        warnEcho "claude.nix: $d/.envrc exists and isn't ours; set the Claude account there by hand (personal: export CLAUDE_CONFIG_DIR=\"${profileDir}\")"
         continue
       fi
-      if ! cmp -s ${envrc} "$d/.envrc"; then
-        run install -m 644 ${envrc} "$d/.envrc"
+      if ! cmp -s "$src" "$d/.envrc"; then
+        run install -m 644 "$src" "$d/.envrc"
       fi
       run ${direnv} allow "$d" # content-hash based; re-run after every change
       # Keep it out of git without a global ignore (some repos commit .envrc).
