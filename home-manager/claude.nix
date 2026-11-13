@@ -55,6 +55,8 @@ let
   # account. Only touched where they exist.
   workDirs = [
     "dev/mantle"
+    "dev/kfin-arc-governance"
+    "dev/kfin-master-deck-generator"
   ];
 
   marker = "Managed by Home Manager (home-manager/claude.nix)";
