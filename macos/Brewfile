@@ -7,9 +7,9 @@ brew "ocrmypdf"
 # Enables extra languages support for Tesseract
 brew "tesseract-lang"
 # Terminal emulator — config is managed in Nix (ghostty.nix), app via brew.
-# Nightly ("tip") build; self-updates on the tip channel. Swap back to
-# cask "ghostty" for stable.
-cask "ghostty@tip"
+# Stable releases. For nightlies swap to cask "ghostty@tip" (self-updates on
+# the tip channel).
+cask "ghostty"
 # System info fetch (the `ff` fish abbr); nix build pulls a 1.3 GiB apple-sdk on macOS
 brew "fastfetch"
 uv "huggingface-hub[cli]"
