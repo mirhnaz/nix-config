@@ -324,7 +324,7 @@ On macOS, a new fish shell warns when the Mac has drifted from
 ### Omarchy desktop config (Hyprland + shell)
 
 Omarchy's own user config — `~/.config/hypr/*.lua`, `hyprsunset.conf`,
-`xdph.conf`, `~/.config/omarchy/shell.json`, `shell.toml` and the cloned
+`xdph.conf`, `~/.config/kitty/kitty.conf`, `~/.config/omarchy/shell.json`, `shell.toml` and the cloned
 `mir.indicators` and `mir.switch-user` bar widgets — is kept in git as plain copies under `omarchy/`.
 Home Manager does not manage these files and they are never symlinked:
 Omarchy's shell saves `shell.json` atomically and its migrations move new

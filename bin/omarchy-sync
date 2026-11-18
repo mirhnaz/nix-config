@@ -30,6 +30,9 @@ ITEMS=(
   hypr/scripts/mouse-wheel-focus
   hypr/hyprsunset.conf
   hypr/xdph.conf
+  # kitty: font/size/theme include; Omarchy's font, text-size and glass
+  # tools edit it in place. (On macOS kitty is HM-managed, see kitty.nix.)
+  kitty/kitty.conf
   omarchy/shell.json
   omarchy/shell.toml
   omarchy/plugins/mir.indicators

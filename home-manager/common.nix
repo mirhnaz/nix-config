@@ -10,6 +10,7 @@
 
   imports = [
     ./ghostty.nix
+    ./kitty.nix # macOS: font + colours mirrored from ghostty.nix
     ./pele.nix # Mermaid-to-SVG command for agents; uses the host's Node
     ./aliases.nix # shared shell shortcuts (fish + Omarchy bash)
     ./claude.nix # direnv + personal Claude Code account per directory

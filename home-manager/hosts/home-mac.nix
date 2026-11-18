@@ -33,4 +33,10 @@
   # package = null means HM only writes ~/.config/ghostty/config. All settings
   # and keybinds live in ../ghostty.nix so every host gets the same config.
   programs.ghostty.package = null;
+
+  # GUI apps from home.packages (kitty, see ../kitty.nix) are *copied* to
+  # ~/Applications/Home Manager Apps rather than symlinked (the pre-25.11
+  # default): Spotlight and Launchpad don't index symlinked apps.
+  targets.darwin.linkApps.enable = false;
+  targets.darwin.copyApps.enable = true;
 }
