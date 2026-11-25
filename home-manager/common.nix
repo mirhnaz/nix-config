@@ -61,6 +61,7 @@
       #development
       github-cli
       awscli2 # AWS CLI v2 (`aws`)
+      ssm-session-manager-plugin # `aws ssm start-session` plugin
       cloc
       tokei
       git-lfs
