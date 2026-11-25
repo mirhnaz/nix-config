@@ -60,6 +60,7 @@
 
       #development
       github-cli
+      awscli2 # AWS CLI v2 (`aws`)
       cloc
       tokei
       git-lfs
