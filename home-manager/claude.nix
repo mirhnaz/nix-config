@@ -16,10 +16,14 @@
 # This module never writes to ~/.claude. It only reads settings.json and
 # keybindings.json from it once, to seed the personal profile.
 #
-# Add a personal repo: append it to `personalDirs` and switch. A repo's own
-# .envrc is never overwritten (activation warns instead); add the export by
-# hand there. A nested .envrc under ~/personal or ~/dev must start with `source_up`,
-# or it replaces ours (direnv only loads the nearest one).
+# Layout: ~/personal (incl. ~/personal/dev) is personal; ~/dev is work
+# (`workDirs` gives ~/dev an .envrc that unsets the personal profile).
+#
+# Add a personal repo: put it under ~/personal/dev (covered by ~/personal), or
+# append it to `personalDirs` and switch. A repo's own .envrc is never
+# overwritten (activation warns instead); add the export by hand there. A nested
+# .envrc under ~/personal must start with `source_up`, or it replaces ours
+# (direnv only loads the nearest one).
 #
 # Keep a folder inside a personal one on the work account: append it to
 # `workDirs`. It gets an .envrc that sets nothing, which stops direnv from
@@ -37,8 +41,21 @@ let
   # Relative to $HOME. "personal" is created if missing; the rest are only
   # touched where they exist (so a repo absent on one host isn't conjured).
   personalDirs = [
-    "personal"
-    "dev" # everything under ~/dev; the entries below keep working standalone
+    "personal" # everything under ~/personal; the entries below keep working standalone
+    "personal/dev"
+    "personal/dev/thingsand-systems"
+    "personal/dev/safe-rm-rust"
+    "personal/dev/science-chatbot"
+    "personal/dev/omarchy-wallpapers"
+    "personal/dev/SimpleNoteTaker"
+    "personal/dev/timer-app"
+    "personal/dev/practo-rust"
+    "personal/dev/spacemacs-windsurf"
+    "personal/dev/tv-vibehack"
+    # Stays at ~/dev/nix-config (NH_FLAKE / NIX_HOME point there) but on the personal account.
+    "dev/nix-config"
+    # Old ~/dev locations: moved to ~/personal/dev on the Mac (absent there, so skipped); kept for hosts that
+    # still have them under ~/dev (e.g. the Omarchy PC, where Mantle's verify.sh expects ~/dev/thingsand-systems).
     "dev/thingsand-systems"
     "dev/safe-rm-rust"
     "dev/science-chatbot"
@@ -48,15 +65,16 @@ let
     "dev/practo-rust"
     "dev/spacemacs-windsurf"
     "dev/tv-vibehack"
-    "dev/nix-config"
   ];
 
-  # Relative to $HOME: folders inside a personal dir that stay on the work
-  # account. Only touched where they exist.
+  # Relative to $HOME: folders that stay on the work account even inside a
+  # personal dir. Only touched where they exist.
   workDirs = [
+    "dev" # everything under ~/dev is work, except dirs with their own personal .envrc (dev/nix-config)
     "dev/mantle"
     "dev/kfin-arc-governance"
     "dev/kfin-master-deck-generator"
+    "dev/security-debug"
   ];
 
   marker = "Managed by Home Manager (home-manager/claude.nix)";
