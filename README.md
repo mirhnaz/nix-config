@@ -200,7 +200,7 @@ Omarchy's own customisations are copied in with `omarchy-sync`.
 
 8. **Apply the Omarchy customisations** tracked in `omarchy/` (Hyprland Lua
    config, shell settings, the `mir.indicators` bar widget). `monitors.lua` is
-   deliberately not tracked, so set displays up per machine.
+   tracked too, but it holds this PC's displays; adjust it on other machines.
 
    ```sh
    omarchy-sync push                        # repo -> ~/.config, originals kept as *.orig
@@ -329,8 +329,8 @@ Omarchy's own user config — `~/.config/hypr/*.lua`, `hyprsunset.conf`,
 Home Manager does not manage these files and they are never symlinked:
 Omarchy's shell saves `shell.json` atomically and its migrations move new
 files over the Lua config, either of which would replace a symlink with a
-regular file. `monitors.lua` is left out because it holds one machine's
-outputs and scale.
+regular file. `monitors.lua` is included but holds one machine's outputs and
+scale, so check it before pushing to a machine with different displays.
 
 `bin/omarchy-sync` (on `PATH` via Home Manager) copies in either direction:
 

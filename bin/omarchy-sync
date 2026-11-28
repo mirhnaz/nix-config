@@ -18,10 +18,11 @@ set -euo pipefail
 REPO="${NIX_HOME:-$HOME/dev/nix-config}/omarchy"
 LIVE="$HOME/.config"
 
-# monitors.lua is deliberately NOT here: it carries this machine's outputs and
-# scale, and pushing it to another box would misconfigure its displays.
+# monitors.lua carries this machine's outputs and scale (mir-omarchy-pc's
+# DP-3 ultrawide); review it before pushing to a box with different displays.
 ITEMS=(
   hypr/hyprland.lua
+  hypr/monitors.lua
   hypr/bindings.lua
   hypr/looknfeel.lua
   hypr/input.lua
