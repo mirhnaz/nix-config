@@ -38,3 +38,10 @@ o.rebind("SUPER + mouse_up", "Previous scrolling window or workspace", "bash ~/.
 o.bind("SUPER + CTRL + G", "Toggle ScrollOverview", function()
   hl.plugin.scrolloverview.overview("toggle all")
 end)
+
+-- Screenshots on a Mac keyboard (no Print key), macOS-style Cmd+Ctrl+Shift+3/4.
+-- Both copy to the clipboard and save to ~/Pictures/Screenshots.
+-- 3: whole focused monitor, captured instantly (no overlay, no click)
+-- 4: region picker (Omarchy's default)
+o.bind("SUPER + CTRL + SHIFT + code:12", "Screenshot (full screen)", "omasnap fullscreen --copy --save")
+o.bind("SUPER + CTRL + SHIFT + code:13", "Screenshot (region)", "omarchy-capture-screenshot")
